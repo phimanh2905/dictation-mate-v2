@@ -90,8 +90,8 @@ export default function PracticePage({ onNavigate }: PracticePageProps) {
         {/* LEFT PANE: Video Only */}
         <Panel 
           defaultSize={currentRatio}
-          minSize={25}
-          maxSize={60}
+          minSize={20}
+          maxSize={80}
           className="flex flex-col bg-black relative"
         >
           <VideoPane video={video} />
@@ -109,7 +109,7 @@ export default function PracticePage({ onNavigate }: PracticePageProps) {
         {/* RIGHT PANE: Practice Area */}
         <Panel 
           defaultSize={100 - currentRatio}
-          minSize={40}
+          minSize={20}
           className="bg-slate-50 overflow-hidden"
         >
           <PracticePane mode={mode} video={video} />
