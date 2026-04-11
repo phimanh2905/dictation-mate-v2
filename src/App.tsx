@@ -18,6 +18,8 @@ import ProfilePage from './components/ProfilePage';
 import AddVideoPage from './components/AddVideoPage';
 import MyVideosPage from './components/MyVideosPage';
 import AddVideoModal from './components/create/AddVideoModal';
+import LeaderboardPage from './components/LeaderboardPage';
+import StatisticsPage from './components/StatisticsPage';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<Page>('home');
@@ -42,8 +44,8 @@ export default function App() {
       case 'profile': return <ProfilePage onNavigate={setCurrentPage} />;
       case 'create': return <AddVideoPage onNavigate={setCurrentPage} />;
       case 'library': return <MyVideosPage onNavigate={setCurrentPage} onAddVideo={handleAddVideo} />;
-      case 'leaderboard': return <PlaceholderPage title="Leaderboard" icon="🏆" />;
-      case 'analytics': return <PlaceholderPage title="Statistics" icon="📈" />;
+      case 'leaderboard': return <LeaderboardPage onNavigate={setCurrentPage} />;
+      case 'analytics': return <StatisticsPage onNavigate={setCurrentPage} />;
       case 'settings': return <PlaceholderPage title="Settings" icon="⚙️" />;
       default: return <HomePage onNavigate={setCurrentPage} onAddVideo={handleAddVideo} />;
     }
