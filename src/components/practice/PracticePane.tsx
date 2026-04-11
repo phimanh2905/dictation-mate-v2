@@ -4,7 +4,7 @@ import { PracticeMode, Video } from '../../types';
 import DictationPanel from './DictationPanel';
 import ShadowingPanel from './ShadowingPanel';
 import SpeakingPanel from './SpeakingPanel';
-import WritingPanel from './WritingPanel';
+import SummaryPanel from './SummaryPanel';
 
 interface PracticePaneProps {
   mode: PracticeMode;
@@ -18,7 +18,7 @@ export default function PracticePane({ mode, video }: PracticePaneProps) {
         {mode === 'dictation' && <DictationPanel key="dictation" />}
         {mode === 'shadowing' && <ShadowingPanel key="shadowing" />}
         {mode === 'speaking' && <SpeakingPanel key="speaking" />}
-        {mode === 'writing' && <WritingPanel key="writing" />}
+        {mode === 'summary' && <SummaryPanel key="summary" />}
       </AnimatePresence>
     </div>
   );

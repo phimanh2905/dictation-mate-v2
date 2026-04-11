@@ -1,6 +1,6 @@
 import React from 'react';
 import { PracticeMode } from '../../types';
-import { Type, Mic, MessageSquare, PenTool } from 'lucide-react';
+import { Type, Mic, MessageSquare, LayoutDashboard } from 'lucide-react';
 
 interface ModeTabsProps {
   active: PracticeMode;
@@ -9,10 +9,10 @@ interface ModeTabsProps {
 }
 
 const modes: { id: PracticeMode; label: string; icon: React.ElementType; color: string }[] = [
-  { id: 'dictation', label: 'Dictation', icon: Type, color: 'blue' },
   { id: 'shadowing', label: 'Shadowing', icon: Mic, color: 'violet' },
-  { id: 'speaking', label: 'Speaking', icon: MessageSquare, color: 'emerald' },
-  { id: 'writing', label: 'Writing', icon: PenTool, color: 'amber' },
+  { id: 'speaking', label: 'Phát âm', icon: MessageSquare, color: 'emerald' },
+  { id: 'dictation', label: 'Chép chính tả', icon: Type, color: 'blue' },
+  { id: 'summary', label: 'Tóm tắt', icon: LayoutDashboard, color: 'amber' },
 ];
 
 export default function ModeTabs({ active, onChange, className = '' }: ModeTabsProps) {

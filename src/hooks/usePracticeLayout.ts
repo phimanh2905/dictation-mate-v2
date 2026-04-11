@@ -7,7 +7,7 @@ const DEFAULT_RATIOS: Record<PracticeMode, number> = {
   dictation: 40,
   shadowing: 50,
   speaking: 35,
-  writing: 30,
+  summary: 30,
 };
 
 export function usePracticeLayout() {

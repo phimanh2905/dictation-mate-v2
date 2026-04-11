@@ -5,7 +5,6 @@ import { ChevronUp, ChevronDown } from 'lucide-react';
 import { Page, PracticeMode } from '../types';
 import { MOCK_VIDEOS } from '../constants';
 import PracticeHeader from './practice/PracticeHeader';
-import ModeTabs from './practice/ModeTabs';
 import VideoPane from './practice/VideoPane';
 import PracticePane from './practice/PracticePane';
 import { usePracticeLayout } from '../hooks/usePracticeLayout';
@@ -15,7 +14,7 @@ interface PracticePageProps {
 }
 
 export default function PracticePage({ onNavigate }: PracticePageProps) {
-  const [mode, setMode] = useState<PracticeMode>('dictation');
+  const [mode, setMode] = useState<PracticeMode>('shadowing');
   const { userRatios, saveRatio } = usePracticeLayout();
   const [isVideoExpanded, setIsVideoExpanded] = useState(true);
   
@@ -32,15 +31,13 @@ export default function PracticePage({ onNavigate }: PracticePageProps) {
   if (isMobile) {
     return (
       <div className="fixed inset-0 flex flex-col bg-slate-50 z-[100] overflow-hidden">
-        <PracticeHeader video={video} onBack={() => onNavigate('home')} />
+        <PracticeHeader 
+          video={video} 
+          onBack={() => onNavigate('home')} 
+          mode={mode}
+          onModeChange={setMode}
+        />
         
-        <div className="bg-white border-b border-slate-200 px-4 py-2 shrink-0">
-          <ModeTabs 
-            active={mode} 
-            onChange={setMode} 
-          />
-        </div>
-
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Collapsible Video */}
           <AnimatePresence initial={false}>
@@ -78,15 +75,13 @@ export default function PracticePage({ onNavigate }: PracticePageProps) {
 
   return (
     <div className="fixed inset-0 flex flex-col bg-slate-50 z-[100] overflow-hidden">
-      <PracticeHeader video={video} onBack={() => onNavigate('home')} />
+      <PracticeHeader 
+        video={video} 
+        onBack={() => onNavigate('home')} 
+        mode={mode}
+        onModeChange={setMode}
+      />
       
-      <div className="bg-white border-b border-slate-200 px-4 py-2 shrink-0">
-        <ModeTabs 
-          active={mode} 
-          onChange={setMode} 
-        />
-      </div>
-
       <PanelGroup 
         direction="horizontal" 
         className="flex-1 overflow-hidden"

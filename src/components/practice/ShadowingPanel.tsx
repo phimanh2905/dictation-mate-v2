@@ -84,10 +84,13 @@ export default function ShadowingPanel() {
 
             <div className="flex items-center gap-8">
               <button 
-                className={`p-4 rounded-2xl transition-all ${hasRecorded ? 'text-slate-400 hover:bg-slate-100 hover:text-slate-600' : 'text-slate-200 cursor-not-allowed'}`}
+                className={`flex flex-col items-center gap-1 transition-all ${hasRecorded ? 'text-slate-600 hover:text-slate-900' : 'text-slate-200 cursor-not-allowed'}`}
                 disabled={!hasRecorded}
               >
-                <RotateCcw size={24} />
+                <div className="p-4 bg-slate-100 rounded-2xl">
+                  <RotateCcw size={24} />
+                </div>
+                <span className="text-[10px] font-bold uppercase tracking-wider">Replay</span>
               </button>
 
               <button
@@ -95,20 +98,28 @@ export default function ShadowingPanel() {
                   setIsRecording(!isRecording);
                   if (isRecording) setHasRecorded(true);
                 }}
-                className={`w-20 h-20 rounded-full flex items-center justify-center transition-all shadow-xl active:scale-95 ${
+                className="flex flex-col items-center gap-1 group"
+              >
+                <div className={`w-20 h-20 rounded-full flex items-center justify-center transition-all shadow-xl active:scale-95 ${
                   isRecording 
                     ? 'bg-rose-500 text-white shadow-rose-200' 
                     : 'bg-violet-600 text-white shadow-violet-200 hover:bg-violet-700'
-                }`}
-              >
-                {isRecording ? <Square size={28} fill="currentColor" /> : <Mic size={32} />}
+                }`}>
+                  {isRecording ? <Square size={28} fill="currentColor" /> : <Mic size={32} />}
+                </div>
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider group-hover:text-violet-600 transition-colors">
+                  {isRecording ? 'Stop' : 'Record'}
+                </span>
               </button>
 
               <button 
-                className={`p-4 rounded-2xl transition-all ${hasRecorded ? 'text-slate-400 hover:bg-slate-100 hover:text-slate-600' : 'text-slate-200 cursor-not-allowed'}`}
+                className={`flex flex-col items-center gap-1 transition-all ${hasRecorded ? 'text-emerald-600 hover:text-emerald-700' : 'text-slate-200 cursor-not-allowed'}`}
                 disabled={!hasRecorded}
               >
-                <Play size={24} fill={hasRecorded ? "currentColor" : "none"} />
+                <div className={`p-4 rounded-2xl ${hasRecorded ? 'bg-emerald-50' : 'bg-slate-100'}`}>
+                  <CheckCircle2 size={24} />
+                </div>
+                <span className="text-[10px] font-bold uppercase tracking-wider">Analyze</span>
               </button>
             </div>
 

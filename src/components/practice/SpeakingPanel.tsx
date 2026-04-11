@@ -1,85 +1,134 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { Bot, User, Mic, Send, Sparkles } from 'lucide-react';
-
-interface Message {
-  sender: 'user' | 'ai';
-  text: string;
-  correction?: string;
-}
+import { Mic, Play, RotateCcw, Sparkles } from 'lucide-react';
 
 export default function SpeakingPanel() {
-  const [messages, setMessages] = useState<Message[]>([
-    { sender: 'ai', text: "Hi! I'm your AI conversation partner. Let's discuss the topic from the video. What do you think about salary negotiation strategies?" }
-  ]);
-  const [input, setInput] = useState('');
+  const [isRecording, setIsRecording] = useState(false);
+  const [hasResult, setHasResult] = useState(false);
+
+  const words = [
+    { text: 'the', score: 95, status: 'exact' },
+    { text: 'key', score: 92, status: 'exact' },
+    { text: 'is', score: 98, status: 'exact' },
+    { text: 'to', score: 90, status: 'exact' },
+    { text: 'research', score: 88, status: 'close' },
+    { text: 'market', score: 94, status: 'exact' },
+    { text: 'rates', score: 65, status: 'wrong' },
+    { text: 'beforehand', score: 82, status: 'close' },
+  ];
 
   return (
     <motion.div 
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
-      className="flex-1 flex flex-col h-full bg-slate-50/30 p-6"
+      className="flex-1 flex flex-col h-full overflow-y-auto no-scrollbar p-6 space-y-6"
     >
-      <div className="max-w-2xl mx-auto w-full h-full flex flex-col bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
-        {/* Chat Area */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6 no-scrollbar">
-          {messages.map((msg, idx) => (
-            <div key={idx} className={`flex gap-4 ${msg.sender === 'user' ? 'flex-row-reverse' : ''}`}>
-              <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 shadow-sm ${
-                msg.sender === 'user' ? 'bg-slate-200' : 'bg-emerald-600 text-white'
-              }`}>
-                {msg.sender === 'user' ? <User size={20} /> : <Bot size={20} />}
-              </div>
-              
-              <div className={`max-w-[80%] space-y-2 ${msg.sender === 'user' ? 'items-end' : ''}`}>
-                <div className={`p-4 rounded-3xl shadow-sm text-sm font-medium leading-relaxed ${
-                  msg.sender === 'user' 
-                    ? 'bg-emerald-600 text-white rounded-tr-none' 
-                    : 'bg-white text-slate-800 rounded-tl-none border border-slate-100'
-                }`}>
-                  {msg.text}
-                </div>
-                
-                {msg.correction && (
-                  <div className="flex items-start gap-2 p-3 bg-amber-50 border border-amber-100 rounded-2xl">
-                    <Sparkles size={14} className="text-amber-500 shrink-0 mt-0.5" />
-                    <p className="text-[11px] text-amber-800 font-bold leading-tight">
-                      Suggestion: <span className="font-normal">{msg.correction}</span>
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Input Area */}
-        <div className="p-6 bg-white border-t border-slate-100 shrink-0">
-          <div className="flex gap-3">
-            <button className="w-12 h-12 bg-slate-100 text-slate-500 rounded-2xl flex items-center justify-center hover:bg-slate-200 transition-all active:scale-95">
-              <Mic size={24} />
+      <div className="max-w-2xl mx-auto w-full bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
+        {/* Target Text Section */}
+        <div className="p-8 text-center space-y-6">
+          <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Target Sentence</h3>
+          <p className="text-2xl font-bold text-slate-800 leading-relaxed">
+            "the key is to research market rates beforehand"
+          </p>
+          
+          <div className="flex justify-center">
+            <button className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-600 rounded-xl font-bold hover:bg-emerald-100 transition-all">
+              <Play size={18} fill="currentColor" />
+              Listen to native
             </button>
-            
-            <div className="flex-1 relative">
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Type your response..."
-                className="w-full h-12 pl-4 pr-12 bg-slate-100 border-none rounded-2xl text-sm font-medium focus:ring-2 focus:ring-emerald-500/20 focus:bg-white transition-all"
-              />
-              <button 
-                className={`absolute right-1 top-1 w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
-                  input.trim() ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-100' : 'text-slate-300'
-                }`}
-              >
-                <Send size={18} />
-              </button>
-            </div>
           </div>
         </div>
+
+        {/* Comparison View (Only if hasResult) */}
+        {hasResult && (
+          <div className="px-8 py-6 bg-slate-50 border-y border-slate-100">
+            <div className="flex flex-wrap justify-center gap-x-3 gap-y-4">
+              {words.map((word, idx) => (
+                <div key={idx} className="flex flex-col items-center gap-1">
+                  <span className={`text-xl font-bold ${
+                    word.status === 'exact' ? 'text-emerald-500' : 
+                    word.status === 'close' ? 'text-amber-500' : 'text-rose-500'
+                  }`}>
+                    {word.text}
+                  </span>
+                  <span className="text-[10px] font-mono text-slate-400">{word.score}%</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Recorder Section */}
+        <div className="p-8 flex flex-col items-center gap-6">
+          {isRecording && (
+            <div className="flex items-center gap-3 text-emerald-500 font-bold animate-pulse">
+              <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full" />
+              0:03
+            </div>
+          )}
+
+          <button
+            onClick={() => {
+              setIsRecording(!isRecording);
+              if (isRecording) setHasResult(true);
+            }}
+            className={`w-20 h-20 rounded-full flex items-center justify-center transition-all shadow-xl active:scale-95 ${
+              isRecording 
+                ? 'bg-rose-500 text-white shadow-rose-200' 
+                : 'bg-emerald-600 text-white shadow-emerald-200 hover:bg-emerald-700'
+            }`}
+          >
+            {isRecording ? <div className="w-6 h-6 bg-white rounded-sm" /> : <Mic size={32} />}
+          </button>
+
+          <p className="text-sm font-medium text-slate-500">
+            {isRecording ? 'Tap to stop' : 'Tap to start recording'}
+          </p>
+        </div>
       </div>
+
+      {/* Result & Feedback (Only if hasResult) */}
+      {hasResult && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-2xl mx-auto w-full space-y-4"
+        >
+          {/* Score Card */}
+          <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 rounded-2xl bg-emerald-50 flex items-center justify-center border-2 border-emerald-100">
+                <span className="text-2xl font-bold text-emerald-600">85%</span>
+              </div>
+              <div>
+                <h4 className="font-bold text-slate-900">Overall Score</h4>
+                <p className="text-xs text-slate-500">Great job! You're almost there.</p>
+              </div>
+            </div>
+            <button className="p-3 text-slate-400 hover:bg-slate-50 rounded-xl transition-all">
+              <RotateCcw size={20} />
+            </button>
+          </div>
+
+          {/* Feedback Box */}
+          <div className="bg-amber-50 border border-amber-100 rounded-3xl p-6 flex gap-4">
+            <div className="w-10 h-10 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center shrink-0">
+              <Sparkles size={20} />
+            </div>
+            <div className="space-y-1">
+              <h4 className="text-sm font-bold text-amber-900">Pronunciation Tip</h4>
+              <p className="text-sm text-amber-800 leading-relaxed">
+                'rates' sounds like 'rats' - practice the <span className="font-bold">/eɪ/</span> sound by dropping your jaw slightly more.
+              </p>
+            </div>
+          </div>
+
+          <button className="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold hover:bg-black transition-all shadow-lg active:scale-95">
+            Try Next Sentence
+          </button>
+        </motion.div>
+      )}
     </motion.div>
   );
 }

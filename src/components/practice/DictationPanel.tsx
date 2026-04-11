@@ -45,21 +45,38 @@ export default function DictationPanel() {
         {/* Main Content Area */}
         <div className="p-8 space-y-12">
           <div className="text-center space-y-8">
-            <p className="text-2xl text-slate-700 leading-relaxed font-medium">
+            <div className="text-2xl text-slate-700 leading-relaxed font-medium">
               "...the key is to research{' '}
               <span className={`inline-block min-w-[140px] border-b-4 px-3 py-1 rounded-lg transition-all ${
                 status === 'correct' ? 'border-emerald-500 text-emerald-600 bg-emerald-50' : 
                 status === 'wrong' ? 'border-rose-500 text-rose-600 bg-rose-50' : 
-                'border-blue-400 bg-slate-50 text-transparent'
+                'border-blue-400 bg-slate-50 text-slate-400'
               }`}>
-                {showHint || status !== 'idle' ? 'market rates' : '_____ _____'}
+                {status === 'correct' ? (
+                  <span className="flex items-center justify-center gap-2">
+                    market rates <CheckCircle2 size={20} />
+                  </span>
+                ) : status === 'wrong' ? (
+                  <span className="flex items-center justify-center gap-2">
+                    {input || '_____'} <XCircle size={20} />
+                  </span>
+                ) : (
+                  showHint ? 'market rates' : '[________]'
+                )}
               </span>
               {' '}beforehand..."
-            </p>
+            </div>
+
+            {status === 'wrong' && (
+              <div className="text-emerald-600 font-bold text-sm bg-emerald-50 py-2 px-4 rounded-xl inline-block">
+                Correct answer: market rates
+              </div>
+            )}
 
             <input
               type="text"
               value={input}
+              disabled={status !== 'idle'}
               onChange={(e) => {
                 setInput(e.target.value);
                 if (status !== 'idle') setStatus('idle');
@@ -79,56 +96,39 @@ export default function DictationPanel() {
         <div className="px-8 py-6 bg-slate-50 border-t border-slate-100 flex gap-4">
           <button
             onClick={() => setShowHint(true)}
-            className="flex-1 py-4 bg-white border border-slate-200 text-slate-600 rounded-2xl font-bold hover:bg-slate-100 transition-all flex items-center justify-center gap-2 active:scale-95 shadow-sm"
+            disabled={status !== 'idle'}
+            className="flex-1 py-4 bg-white border border-slate-200 text-slate-600 rounded-2xl font-bold hover:bg-slate-100 transition-all flex items-center justify-center gap-2 active:scale-95 shadow-sm disabled:opacity-50"
           >
             <Lightbulb size={20} className="text-amber-500" />
             Hint
           </button>
           <button
-            onClick={checkAnswer}
-            disabled={!input.trim()}
-            className="flex-[2] py-4 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 disabled:opacity-50 transition-all shadow-lg shadow-blue-500/25 active:scale-95 flex items-center justify-center gap-2"
+            onClick={status === 'idle' ? checkAnswer : () => { setStatus('idle'); setInput(''); setShowHint(false); }}
+            disabled={status === 'idle' && !input.trim()}
+            className={`flex-[2] py-4 rounded-2xl font-bold transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2 ${
+              status === 'idle' 
+                ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-blue-500/25' 
+                : 'bg-slate-900 text-white hover:bg-black'
+            }`}
           >
-            Check Answer
+            {status === 'idle' ? 'Check Answer' : 'Try Again'}
+            {status === 'idle' ? <CheckCircle2 size={20} /> : <RefreshCw size={18} />}
           </button>
         </div>
       </div>
 
-      {/* Feedback Card */}
+      {/* Next Step Button (Only if correct) */}
       <AnimatePresence>
-        {status !== 'idle' && (
+        {status === 'correct' && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
             className="max-w-2xl mx-auto w-full mt-6"
           >
-            <div className={`p-6 rounded-3xl border-2 flex items-center justify-between gap-4 shadow-lg ${
-              status === 'correct' ? 'bg-emerald-50 border-emerald-100' : 'bg-rose-50 border-rose-100'
-            }`}>
-              <div className="flex items-center gap-5">
-                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-sm ${
-                  status === 'correct' ? 'bg-emerald-500 text-white' : 'bg-rose-500 text-white'
-                }`}>
-                  {status === 'correct' ? <CheckCircle2 size={28} /> : <XCircle size={28} />}
-                </div>
-                <div>
-                  <p className={`font-bold text-xl ${status === 'correct' ? 'text-emerald-900' : 'text-rose-900'}`}>
-                    {status === 'correct' ? 'Excellent!' : 'Not quite right'}
-                  </p>
-                  <p className={`text-sm font-medium ${status === 'correct' ? 'text-emerald-700' : 'text-rose-700'}`}>
-                    {status === 'correct' ? 'You nailed "market rates"!' : 'The correct answer was "market rates"'}
-                  </p>
-                </div>
-              </div>
-              
-              <button className={`px-8 py-4 rounded-2xl font-bold text-white flex items-center gap-2 transition-all active:scale-95 shadow-md ${
-                status === 'correct' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-slate-900 hover:bg-black'
-              }`}>
-                {status === 'correct' ? 'Next Chunk' : 'Try Again'}
-                {status === 'correct' ? <ChevronRight size={20} /> : <RefreshCw size={18} />}
-              </button>
-            </div>
+            <button className="w-full py-4 bg-emerald-600 text-white rounded-2xl font-bold hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2">
+              Next Chunk
+              <ChevronRight size={20} />
+            </button>
           </motion.div>
         )}
       </AnimatePresence>

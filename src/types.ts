@@ -68,7 +68,7 @@ export interface UserVideo extends Video {
   isFavorite?: boolean;
 }
 
-export type PracticeMode = 'dictation' | 'shadowing' | 'speaking' | 'writing';
+export type PracticeMode = 'dictation' | 'shadowing' | 'speaking' | 'summary';
 
 export interface TranscriptLine {
   timestamp: number;
