@@ -10,10 +10,13 @@ import {
   HelpCircle, 
   LogOut, 
   ChevronRight,
-  Edit2
+  Edit2,
+  BarChart3 as Chart,
+  ArrowRight,
+  Flame
 } from 'lucide-react';
 
-export default function ProfilePage() {
+export default function ProfilePage({ onNavigate }: { onNavigate: (page: any) => void }) {
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       {/* Profile Header */}
@@ -56,6 +59,50 @@ export default function ProfilePage() {
 
         {/* Decorative background */}
         <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
+      </section>
+
+      {/* Dashboard Preview Card - Shows quick stats + link */}
+      <section className="bg-gradient-to-r from-blue-600 to-violet-600 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
+        {/* Background decoration */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+        
+        <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20">
+              <Chart size={28} className="text-white" />
+            </div>
+            <div>
+              <h3 className="font-bold text-xl">Your Progress</h3>
+              <p className="text-blue-100 text-sm mt-1">
+                47 hours studied • 12.4k XP • 12 day streak
+              </p>
+            </div>
+          </div>
+          
+          <button 
+            onClick={() => onNavigate('statistics')}
+            className="px-6 py-3 bg-white/20 backdrop-blur-md rounded-2xl font-bold text-sm border border-white/20 hover:bg-white/30 transition-all flex items-center gap-2"
+          >
+            View Full Dashboard
+            <ArrowRight size={18} />
+          </button>
+        </div>
+        
+        {/* Mini stat pills */}
+        <div className="relative z-10 flex flex-wrap gap-3 mt-6 pt-6 border-t border-white/20">
+          <span className="px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-xs font-bold border border-white/10">
+            🔥 12 Day Streak
+          </span>
+          <span className="px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-xs font-bold border border-white/10">
+            ⭐ 12.4k XP
+          </span>
+          <span className="px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-xs font-bold border border-white/10">
+            🎯 B2 Level
+          </span>
+          <span className="px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-xs font-bold border border-white/10">
+            📚 247 Words
+          </span>
+        </div>
       </section>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -127,29 +174,6 @@ export default function ProfilePage() {
           </div>
         </section>
       </div>
-
-      {/* Stats Summary */}
-      <section className="bg-blue-600 rounded-3xl p-8 text-white shadow-xl flex flex-wrap items-center justify-around gap-8">
-        <div className="text-center">
-          <div className="text-3xl font-bold mb-1">12</div>
-          <div className="text-xs font-bold text-blue-200 uppercase tracking-widest">Day Streak</div>
-        </div>
-        <div className="w-px h-12 bg-white/20 hidden md:block"></div>
-        <div className="text-center">
-          <div className="text-3xl font-bold mb-1">47</div>
-          <div className="text-xs font-bold text-blue-200 uppercase tracking-widest">Hours Studied</div>
-        </div>
-        <div className="w-px h-12 bg-white/20 hidden md:block"></div>
-        <div className="text-center">
-          <div className="text-3xl font-bold mb-1">2.3k</div>
-          <div className="text-xs font-bold text-blue-200 uppercase tracking-widest">XP Points</div>
-        </div>
-        <div className="w-px h-12 bg-white/20 hidden md:block"></div>
-        <div className="text-center">
-          <div className="text-3xl font-bold mb-1">47</div>
-          <div className="text-xs font-bold text-blue-200 uppercase tracking-widest">Videos Mastered</div>
-        </div>
-      </section>
     </div>
   );
 }

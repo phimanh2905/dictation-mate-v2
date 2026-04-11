@@ -8,9 +8,18 @@ interface PracticeHeaderProps {
   onBack: () => void;
   mode: PracticeMode;
   onModeChange: (mode: PracticeMode) => void;
+  isTestMode: boolean;
+  onToggleTestMode: () => void;
 }
 
-export default function PracticeHeader({ video, onBack, mode, onModeChange }: PracticeHeaderProps) {
+export default function PracticeHeader({ 
+  video, 
+  onBack, 
+  mode, 
+  onModeChange,
+  isTestMode,
+  onToggleTestMode
+}: PracticeHeaderProps) {
   return (
     <header className="h-16 bg-white/80 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-4 shrink-0 z-10">
       <div className="flex items-center gap-4 w-1/4 min-w-0">
@@ -22,12 +31,41 @@ export default function PracticeHeader({ video, onBack, mode, onModeChange }: Pr
         </button>
         <div className="min-w-0 hidden md:block">
           <h1 className="text-sm font-bold text-slate-800 truncate">{video.title}</h1>
-          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Practice Mode</p>
+          <div className="flex items-center gap-2">
+            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+              {isTestMode ? 'Test Mode' : 'Practice Mode'}
+            </p>
+            {isTestMode && <div className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse" />}
+          </div>
         </div>
       </div>
 
-      <div className="flex-1 flex justify-center">
+      <div className="flex-1 flex items-center justify-center gap-6">
         <ModeTabs active={mode} onChange={onModeChange} />
+        
+        {/* Mode Toggle */}
+        <div className="hidden sm:flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
+          <button 
+            onClick={() => isTestMode && onToggleTestMode()}
+            className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${
+              !isTestMode 
+                ? 'bg-blue-600 text-white shadow-sm' 
+                : 'text-slate-500 hover:text-slate-700'
+            }`}
+          >
+            Practice
+          </button>
+          <button 
+            onClick={() => !isTestMode && onToggleTestMode()}
+            className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${
+              isTestMode 
+                ? 'bg-amber-500 text-white shadow-sm' 
+                : 'text-slate-500 hover:text-slate-700'
+            }`}
+          >
+            Test
+          </button>
+        </div>
       </div>
 
       <div className="flex items-center justify-end gap-2 w-1/4">

@@ -3,7 +3,7 @@ import { motion } from 'motion/react';
 import { 
   Flame, Clock, Star, Target, Zap, Headphones, 
   Mic, BookOpen, PenTool, Lightbulb, CheckCircle2, 
-  Trophy, Share2, Edit3, ChevronRight, Calendar
+  Trophy, Share2, Edit3, ChevronRight, Calendar, User
 } from 'lucide-react';
 
 interface UserProfile {
@@ -140,45 +140,36 @@ export default function StatisticsPage({ onNavigate }: { onNavigate: (page: any)
 
   return (
     <div className="space-y-8 pb-12">
-      {/* User Profile Header */}
-      <section className="bg-white rounded-3xl border border-gray-200 p-6 shadow-sm">
-        <div className="flex flex-col sm:flex-row items-center gap-6">
-          {/* Avatar with level badge */}
-          <div className="relative">
-            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 p-1 shadow-lg">
-              <img 
-                src={userProfile.avatar} 
-                alt="User" 
-                className="w-full h-full rounded-full object-cover border-4 border-white"
-              />
-            </div>
-            <div className="absolute -bottom-1 -right-1 w-10 h-10 bg-amber-400 rounded-full flex items-center justify-center text-sm font-black text-white border-4 border-white shadow-md">
-              {userProfile.level}
-            </div>
-          </div>
-          
-          {/* User Info */}
-          <div className="text-center sm:text-left flex-1">
-            <h1 className="text-3xl font-bold text-gray-900 tracking-tight">{userProfile.name}</h1>
-            <p className="text-gray-500 font-medium mt-1">Joined {userProfile.joinedDate} • Learning English</p>
-            <div className="flex flex-wrap justify-center sm:justify-start gap-2 mt-3">
-              <span className="px-3 py-1 bg-blue-50 text-blue-600 text-xs font-bold rounded-full border border-blue-100">Pro Member</span>
-              <span className="px-3 py-1 bg-emerald-50 text-emerald-600 text-xs font-bold rounded-full border border-emerald-100">Daily Learner</span>
-            </div>
-          </div>
-          
-          {/* Actions */}
-          <div className="flex gap-3 w-full sm:w-auto">
-            <button className="flex-1 sm:flex-none px-6 py-3 border border-gray-200 rounded-2xl text-sm font-bold text-gray-700 hover:bg-gray-50 transition-all flex items-center justify-center gap-2">
-              <Edit3 size={18} />
-              Edit
-            </button>
-            <button className="flex-1 sm:flex-none px-6 py-3 bg-blue-600 text-white rounded-2xl text-sm font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 flex items-center justify-center gap-2">
-              <Share2 size={18} />
-              Share
-            </button>
-          </div>
+      {/* Simple Greeting Header - REPLACES complex profile section */}
+      <section className="flex items-center justify-between bg-white rounded-3xl border border-gray-200 p-6 shadow-sm">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Good morning, Alex! 👋</h1>
+          <p className="text-gray-500 mt-1 flex items-center gap-2">
+            <Flame size={16} className="text-orange-500" fill="currentColor" />
+            You're on a 12-day streak
+          </p>
         </div>
+        
+        {/* Quick Profile Link */}
+        <button 
+          onClick={() => onNavigate('profile')}
+          className="flex items-center gap-3 hover:bg-gray-50 p-2 rounded-2xl transition-all group"
+        >
+          <div className="text-right hidden sm:block">
+            <p className="font-bold text-gray-900 text-sm">Alex Johnson</p>
+            <p className="text-xs text-gray-400">View Profile →</p>
+          </div>
+          <div className="relative">
+            <img 
+              src={userProfile.avatar} 
+              alt="User" 
+              className="w-12 h-12 rounded-full object-cover border-2 border-gray-200 group-hover:border-blue-300 transition-colors"
+            />
+            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-amber-400 rounded-full flex items-center justify-center text-[10px] font-bold text-white border-2 border-white">
+              B2
+            </div>
+          </div>
+        </button>
       </section>
 
       {/* Stats Overview Grid */}
@@ -582,6 +573,18 @@ export default function StatisticsPage({ onNavigate }: { onNavigate: (page: any)
             </motion.div>
           ))}
         </div>
+      </section>
+
+      {/* Link to Full Profile */}
+      <section className="flex items-center justify-center py-4">
+        <button 
+          onClick={() => onNavigate('profile')}
+          className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-2xl text-gray-600 font-bold hover:border-blue-300 hover:text-blue-600 transition-all shadow-sm"
+        >
+          <User size={20} />
+          Manage Your Profile & Settings
+          <ChevronRight size={18} />
+        </button>
       </section>
     </div>
   );
