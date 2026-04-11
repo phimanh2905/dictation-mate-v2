@@ -8,7 +8,8 @@ import {
   Trophy, 
   BarChart3, 
   Settings,
-  User
+  User,
+  Library
 } from 'lucide-react';
 import { Page } from '../types';
 
@@ -22,6 +23,7 @@ interface NavItem {
 const mainNavItems: NavItem[] = [
   { icon: Home, label: 'Home', path: 'home' },
   { icon: Search, label: 'Explore', path: 'explore' },
+  { icon: Library, label: 'My Library', path: 'library' },
 ];
 
 const createNavItems: NavItem[] = [
@@ -45,16 +47,23 @@ const personalNavItems: NavItem[] = [
 interface SidebarProps {
   currentPage: Page;
   onNavigate: (page: Page) => void;
+  onAddVideo: () => void;
   className?: string;
 }
 
-export default function Sidebar({ currentPage, onNavigate, className = '' }: SidebarProps) {
+export default function Sidebar({ currentPage, onNavigate, onAddVideo, className = '' }: SidebarProps) {
   const renderNavItem = (item: NavItem) => {
     const isActive = currentPage === item.path;
     return (
       <button
         key={item.path}
-        onClick={() => onNavigate(item.path)}
+        onClick={() => {
+          if (item.path === 'create') {
+            onAddVideo();
+          } else {
+            onNavigate(item.path);
+          }
+        }}
         className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl transition-all duration-200 group ${
           isActive 
             ? 'bg-blue-600/10 text-blue-600 font-semibold' 

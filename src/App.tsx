@@ -15,24 +15,37 @@ import PracticePage from './components/PracticePage';
 import MasteryLab from './components/MasteryLab';
 import VocabPage from './components/VocabPage';
 import ProfilePage from './components/ProfilePage';
+import AddVideoPage from './components/AddVideoPage';
+import MyVideosPage from './components/MyVideosPage';
+import AddVideoModal from './components/create/AddVideoModal';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<Page>('home');
+  const [isAddVideoModalOpen, setIsAddVideoModalOpen] = useState(false);
+
+  const handleAddVideo = () => {
+    if (window.innerWidth >= 1024) {
+      setIsAddVideoModalOpen(true);
+    } else {
+      setCurrentPage('create');
+    }
+  };
 
   const renderPage = () => {
     switch (currentPage) {
-      case 'home': return <HomePage onNavigate={setCurrentPage} />;
+      case 'home': return <HomePage onNavigate={setCurrentPage} onAddVideo={handleAddVideo} />;
       case 'explore': return <ExplorePage onNavigate={setCurrentPage} />;
       case 'study-room': return <StudyRoom onNavigate={setCurrentPage} />;
       case 'practice': return <PracticePage onNavigate={setCurrentPage} />;
       case 'mastery': return <MasteryLab onNavigate={setCurrentPage} />;
       case 'vocab': return <VocabPage onNavigate={setCurrentPage} />;
       case 'profile': return <ProfilePage onNavigate={setCurrentPage} />;
-      case 'create': return <PlaceholderPage title="Add Video" icon="➕" />;
+      case 'create': return <AddVideoPage onNavigate={setCurrentPage} />;
+      case 'library': return <MyVideosPage onNavigate={setCurrentPage} onAddVideo={handleAddVideo} />;
       case 'leaderboard': return <PlaceholderPage title="Leaderboard" icon="🏆" />;
       case 'analytics': return <PlaceholderPage title="Statistics" icon="📈" />;
       case 'settings': return <PlaceholderPage title="Settings" icon="⚙️" />;
-      default: return <HomePage onNavigate={setCurrentPage} />;
+      default: return <HomePage onNavigate={setCurrentPage} onAddVideo={handleAddVideo} />;
     }
   };
 
@@ -42,6 +55,7 @@ export default function App() {
       <Sidebar 
         currentPage={currentPage} 
         onNavigate={setCurrentPage} 
+        onAddVideo={handleAddVideo}
         className="hidden lg:flex w-60 flex-col" 
       />
       
@@ -68,7 +82,18 @@ export default function App() {
       <BottomNav 
         currentPage={currentPage} 
         onNavigate={setCurrentPage} 
+        onAddVideo={handleAddVideo}
         className="lg:hidden fixed bottom-0 left-0 right-0 z-50" 
+      />
+
+      {/* Global Modal */}
+      <AddVideoModal 
+        isOpen={isAddVideoModalOpen} 
+        onClose={() => setIsAddVideoModalOpen(false)}
+        onSuccess={() => {
+          setIsAddVideoModalOpen(false);
+          setCurrentPage('practice');
+        }}
       />
     </div>
   );

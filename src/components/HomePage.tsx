@@ -17,9 +17,10 @@ import { TOPICS, MOCK_VIDEOS } from '../constants';
 
 interface HomePageProps {
   onNavigate: (page: Page) => void;
+  onAddVideo: () => void;
 }
 
-export default function HomePage({ onNavigate }: HomePageProps) {
+export default function HomePage({ onNavigate, onAddVideo }: HomePageProps) {
   const resumeVideo = MOCK_VIDEOS[0];
   const dailyMix = MOCK_VIDEOS.slice(1);
 
@@ -81,7 +82,7 @@ export default function HomePage({ onNavigate }: HomePageProps) {
             </div>
           </div>
           <button 
-            onClick={() => onNavigate('create')}
+            onClick={onAddVideo}
             className="w-full sm:w-auto px-6 py-3 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-100 active:scale-95 flex items-center justify-center gap-2"
           >
             <PlusCircle size={20} />
