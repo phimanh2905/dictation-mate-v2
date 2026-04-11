@@ -1,0 +1,5 @@
+{
+  "name": "Dictation Mate 2.0",
+  "description": "A comprehensive English learning platform with topic-based content, virtual study rooms, and AI-powered practice modes.",
+  "requestFramePermissions": ["microphone"]
+}
