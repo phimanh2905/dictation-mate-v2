@@ -1,4 +1,5 @@
-import { motion } from 'motion/react';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { 
   User, 
   Mail, 
@@ -13,10 +14,32 @@ import {
   Edit2,
   BarChart3 as Chart,
   ArrowRight,
-  Flame
+  Flame,
+  X,
+  Plus
 } from 'lucide-react';
 
 export default function ProfilePage({ onNavigate }: { onNavigate: (page: any) => void }) {
+  const [targetLevel, setTargetLevel] = useState('C1 Advanced');
+  const [dailyGoal, setDailyGoal] = useState('30 minutes / day');
+  const [interests, setInterests] = useState(['Business', 'Tech', 'Daily Life', 'Science']);
+  const [isEditingLevel, setIsEditingLevel] = useState(false);
+  const [isEditingGoal, setIsEditingGoal] = useState(false);
+  const [newInterest, setNewInterest] = useState('');
+
+  const levels = ['A1 Beginner', 'A2 Elementary', 'B1 Intermediate', 'B2 Upper-Intermediate', 'C1 Advanced', 'C2 Proficiency'];
+  const goals = ['15 minutes / day', '30 minutes / day', '45 minutes / day', '60 minutes / day', '90 minutes / day'];
+
+  const addInterest = () => {
+    if (newInterest.trim() && !interests.includes(newInterest.trim())) {
+      setInterests([...interests, newInterest.trim()]);
+      setNewInterest('');
+    }
+  };
+
+  const removeInterest = (interest: string) => {
+    setInterests(interests.filter(i => i !== interest));
+  };
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       {/* Profile Header */}
@@ -83,7 +106,7 @@ export default function ProfilePage({ onNavigate }: { onNavigate: (page: any) =>
             onClick={() => onNavigate('statistics')}
             className="px-6 py-3 bg-white/20 backdrop-blur-md rounded-2xl font-bold text-sm border border-white/20 hover:bg-white/30 transition-all flex items-center gap-2"
           >
-            View Full Dashboard
+            View Full Statistics
             <ArrowRight size={18} />
           </button>
         </div>
@@ -114,31 +137,96 @@ export default function ProfilePage({ onNavigate }: { onNavigate: (page: any) =>
           </h2>
           
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100">
-              <div>
-                <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Target Level</div>
-                <div className="font-bold text-gray-900">C1 Advanced</div>
+            <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Target Level</div>
+                  {isEditingLevel ? (
+                    <select 
+                      value={targetLevel}
+                      onChange={(e) => {
+                        setTargetLevel(e.target.value);
+                        setIsEditingLevel(false);
+                      }}
+                      className="bg-white border border-gray-200 rounded-lg px-2 py-1 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      autoFocus
+                      onBlur={() => setIsEditingLevel(false)}
+                    >
+                      {levels.map(l => <option key={l} value={l}>{l}</option>)}
+                    </select>
+                  ) : (
+                    <div className="font-bold text-gray-900">{targetLevel}</div>
+                  )}
+                </div>
+                <button 
+                  onClick={() => setIsEditingLevel(!isEditingLevel)}
+                  className="text-blue-600 text-sm font-bold hover:underline"
+                >
+                  {isEditingLevel ? 'Cancel' : 'Change'}
+                </button>
               </div>
-              <button className="text-blue-600 text-sm font-bold hover:underline">Change</button>
             </div>
 
-            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100">
-              <div>
-                <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Daily Goal</div>
-                <div className="font-bold text-gray-900">30 minutes / day</div>
+            <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Daily Goal</div>
+                  {isEditingGoal ? (
+                    <select 
+                      value={dailyGoal}
+                      onChange={(e) => {
+                        setDailyGoal(e.target.value);
+                        setIsEditingGoal(false);
+                      }}
+                      className="bg-white border border-gray-200 rounded-lg px-2 py-1 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      autoFocus
+                      onBlur={() => setIsEditingGoal(false)}
+                    >
+                      {goals.map(g => <option key={g} value={g}>{g}</option>)}
+                    </select>
+                  ) : (
+                    <div className="font-bold text-gray-900">{dailyGoal}</div>
+                  )}
+                </div>
+                <button 
+                  onClick={() => setIsEditingGoal(!isEditingGoal)}
+                  className="text-blue-600 text-sm font-bold hover:underline"
+                >
+                  {isEditingGoal ? 'Cancel' : 'Change'}
+                </button>
               </div>
-              <button className="text-blue-600 text-sm font-bold hover:underline">Change</button>
             </div>
 
             <div className="space-y-3">
               <div className="text-xs font-bold text-gray-400 uppercase tracking-wider">Interests</div>
               <div className="flex flex-wrap gap-2">
-                {['Business', 'Tech', 'Daily Life', 'Science'].map(tag => (
-                  <span key={tag} className="px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-600">
+                {interests.map(tag => (
+                  <span key={tag} className="px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-600 flex items-center gap-2 group">
                     {tag}
+                    <button 
+                      onClick={() => removeInterest(tag)}
+                      className="text-gray-400 hover:text-rose-500 transition-colors"
+                    >
+                      <X size={14} />
+                    </button>
                   </span>
                 ))}
-                <button className="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-sm font-bold">+ Add</button>
+                <div className="flex items-center gap-2">
+                  <input 
+                    type="text"
+                    value={newInterest}
+                    onChange={(e) => setNewInterest(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && addInterest()}
+                    placeholder="Add interest..."
+                    className="px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 w-32"
+                  />
+                  <button 
+                    onClick={addInterest}
+                    className="p-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
+                  >
+                    <Plus size={16} />
+                  </button>
+                </div>
               </div>
             </div>
           </div>

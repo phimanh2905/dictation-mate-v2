@@ -45,7 +45,7 @@ export default function App() {
       case 'create': return <AddVideoPage onNavigate={setCurrentPage} />;
       case 'library': return <MyVideosPage onNavigate={setCurrentPage} onAddVideo={handleAddVideo} />;
       case 'leaderboard': return <LeaderboardPage onNavigate={setCurrentPage} />;
-      case 'analytics': return <StatisticsPage onNavigate={setCurrentPage} />;
+      case 'statistics': return <StatisticsPage onNavigate={setCurrentPage} />;
       case 'settings': return <PlaceholderPage title="Settings" icon="⚙️" />;
       default: return <HomePage onNavigate={setCurrentPage} onAddVideo={handleAddVideo} />;
     }

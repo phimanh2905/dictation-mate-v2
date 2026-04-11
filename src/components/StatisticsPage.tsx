@@ -3,7 +3,8 @@ import { motion } from 'motion/react';
 import { 
   Flame, Clock, Star, Target, Zap, Headphones, 
   Mic, BookOpen, PenTool, Lightbulb, CheckCircle2, 
-  Trophy, Share2, Edit3, ChevronRight, Calendar, User
+  Trophy, Share2, Edit3, ChevronRight, Calendar, User,
+  BarChart3 as BarChart
 } from 'lucide-react';
 
 interface UserProfile {
@@ -143,6 +144,10 @@ export default function StatisticsPage({ onNavigate }: { onNavigate: (page: any)
       {/* Simple Greeting Header - REPLACES complex profile section */}
       <section className="flex items-center justify-between bg-white rounded-3xl border border-gray-200 p-6 shadow-sm">
         <div>
+          <div className="flex items-center gap-2 mb-1">
+            <BarChart size={16} className="text-blue-600" />
+            <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Statistics</span>
+          </div>
           <h1 className="text-2xl font-bold text-gray-900">Good morning, Alex! 👋</h1>
           <p className="text-gray-500 mt-1 flex items-center gap-2">
             <Flame size={16} className="text-orange-500" fill="currentColor" />

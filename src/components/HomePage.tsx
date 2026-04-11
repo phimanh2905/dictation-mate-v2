@@ -55,7 +55,7 @@ export default function HomePage({ onNavigate, onAddVideo }: HomePageProps) {
               Continue Learning
             </button>
             <button 
-              onClick={() => onNavigate('analytics')}
+              onClick={() => onNavigate('statistics')}
               className="px-5 py-2.5 bg-blue-500/30 backdrop-blur-md border border-white/20 text-white rounded-full font-bold text-sm hover:bg-blue-500/40 transition-all active:scale-95"
             >
               <BarChart3 size={18} />

@@ -40,7 +40,7 @@ const socialNavItems: NavItem[] = [
 ];
 
 const personalNavItems: NavItem[] = [
-  { icon: BarChart3, label: 'Statistics', path: 'analytics' },
+  { icon: BarChart3, label: 'Statistics', path: 'statistics' },
   { icon: Settings, label: 'Settings', path: 'settings' },
 ];
 
