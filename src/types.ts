@@ -67,3 +67,11 @@ export interface UserVideo extends Video {
   chunksCompleted: number;
   isFavorite?: boolean;
 }
+
+export type PracticeMode = 'dictation' | 'shadowing' | 'speaking' | 'writing';
+
+export interface TranscriptLine {
+  timestamp: number;
+  text: string;
+  chunkIndex: number;
+}
