@@ -1,0 +1,1044 @@
+{
+  "version": "1.0.0",
+  "project": {
+    "name": "Dictation Mate 2.0",
+    "languages": [
+      "typescript",
+      "css",
+      "html",
+      "json",
+      "markdown"
+    ],
+    "frameworks": [
+      "React",
+      "Vite",
+      "Express",
+      "TailwindCSS",
+      "@google/genai",
+      "Motion",
+      "Lucide React"
+    ],
+    "description": "A comprehensive English learning platform with topic-based content, virtual study rooms, and AI-powered practice modes.",
+    "analyzedAt": "2026-04-11T10:02:24.618Z",
+    "gitCommitHash": "9541aaf63e6846478b1af50213c491cfb71701d4"
+  },
+  "nodes": [
+    {
+      "id": "file:src/main.tsx",
+      "type": "file",
+      "name": "main.tsx",
+      "filePath": "src/main.tsx",
+      "summary": "Application entry point that bootstraps the React app and renders the root App component with StrictMode.",
+      "tags": [
+        "entry-point",
+        "bootstrap",
+        "react",
+        "root-render"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Uses React 19 createRoot API for concurrent features."
+    },
+    {
+      "id": "file:src/App.tsx",
+      "type": "file",
+      "name": "App.tsx",
+      "filePath": "src/App.tsx",
+      "summary": "Main application component managing global navigation state with 7 page routes, sticky navigation bar with mobile responsiveness, streak tracking, and page transitions using Framer Motion.",
+      "tags": [
+        "app-shell",
+        "navigation",
+        "routing",
+        "layout",
+        "state-management"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/types.ts",
+      "type": "file",
+      "name": "types.ts",
+      "filePath": "src/types.ts",
+      "summary": "Central TypeScript type definitions for the application including Page union type, CEFR proficiency levels, Video and Topic interfaces, Mood types, and Kanban tracking structures.",
+      "tags": [
+        "type-definition",
+        "domain-model",
+        "shared-types",
+        "typescript"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/constants.ts",
+      "type": "file",
+      "name": "constants.ts",
+      "filePath": "src/constants.ts",
+      "summary": "Shared application constants defining TOPICS array with 5 topic categories and MOCK_VIDEOS array with sample video data for development and testing.",
+      "tags": [
+        "constants",
+        "mock-data",
+        "configuration",
+        "development"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/components/HomePage.tsx",
+      "type": "file",
+      "name": "HomePage.tsx",
+      "filePath": "src/components/HomePage.tsx",
+      "summary": "Landing page component featuring hero section with CTAs, topic rails, resume learning section with progress indicators, and daily video mix grid with interactive video cards.",
+      "tags": [
+        "page-component",
+        "landing-page",
+        "dashboard",
+        "hero-section"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/components/ExplorePage.tsx",
+      "type": "file",
+      "name": "ExplorePage.tsx",
+      "filePath": "src/components/ExplorePage.tsx",
+      "summary": "Content discovery page with search functionality, CEFR level filters (A1-C2), topic category filters, and filtered video grid with empty state handling.",
+      "tags": [
+        "page-component",
+        "search",
+        "filtering",
+        "content-discovery"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/components/StudyRoom.tsx",
+      "type": "file",
+      "name": "StudyRoom.tsx",
+      "filePath": "src/components/StudyRoom.tsx",
+      "summary": "Virtual study environment with Pomodoro-style focus timer, mood selector popup with 6 mood states, Kanban board for learning stages (To Learn, Learning, Mastered), and content recommendations based on mood.",
+      "tags": [
+        "page-component",
+        "pomodoro",
+        "kanban",
+        "focus-timer",
+        "mood-tracking"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/components/PracticePage.tsx",
+      "type": "file",
+      "name": "PracticePage.tsx",
+      "filePath": "src/components/PracticePage.tsx",
+      "summary": "Interactive practice session page with video player, 4 practice mode tabs (dictation, shadowing, speaking, writing), gap-fill exercises, answer checking with feedback panel, and progress tracking.",
+      "tags": [
+        "page-component",
+        "practice-session",
+        "dictation",
+        "exercise",
+        "feedback"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/components/MasteryLab.tsx",
+      "type": "file",
+      "name": "MasteryLab.tsx",
+      "filePath": "src/components/MasteryLab.tsx",
+      "summary": "Progress dashboard displaying learning statistics (streak, hours, XP, level), simplified Kanban view, and achievement tracking with progress bars for gamification.",
+      "tags": [
+        "page-component",
+        "analytics",
+        "gamification",
+        "achievements",
+        "dashboard"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/components/VocabPage.tsx",
+      "type": "file",
+      "name": "VocabPage.tsx",
+      "filePath": "src/components/VocabPage.tsx",
+      "summary": "Vocabulary management page with collection grids, active review flashcard interface with pronunciation and audio controls, and recently added word list with mastery indicators.",
+      "tags": [
+        "page-component",
+        "vocabulary",
+        "flashcards",
+        "collections"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/components/ProfilePage.tsx",
+      "type": "file",
+      "name": "ProfilePage.tsx",
+      "filePath": "src/components/ProfilePage.tsx",
+      "summary": "User profile page with avatar, account information, learning preferences editor (target level, daily goal, interests), settings menu, and stats summary bar.",
+      "tags": [
+        "page-component",
+        "profile",
+        "settings",
+        "user-preferences"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/index.css",
+      "type": "file",
+      "name": "index.css",
+      "filePath": "src/index.css",
+      "summary": "Global stylesheet importing Tailwind CSS 4 for utility-first styling throughout the application.",
+      "tags": [
+        "stylesheet",
+        "tailwind",
+        "global-styles",
+        "css"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:index.html",
+      "type": "file",
+      "name": "index.html",
+      "filePath": "index.html",
+      "summary": "HTML entry point with root div for React mounting and script tag loading the main.tsx bundle.",
+      "tags": [
+        "entry-point",
+        "html",
+        "root-template"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:vite.config.ts",
+      "type": "config",
+      "name": "vite.config.ts",
+      "filePath": "vite.config.ts",
+      "summary": "Vite build configuration with React plugin, Tailwind CSS Vite integration, path aliasing (@/), and environment variable injection for GEMINI_API_KEY.",
+      "tags": [
+        "configuration",
+        "vite",
+        "build-system",
+        "bundler"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:package.json",
+      "type": "config",
+      "name": "package.json",
+      "filePath": "package.json",
+      "summary": "Project manifest with React 19, Vite, Tailwind CSS 4, Motion (Framer Motion), Lucide icons, and Google GenAI SDK dependencies. Includes dev, build, and lint scripts.",
+      "tags": [
+        "configuration",
+        "dependencies",
+        "npm",
+        "manifest"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:tsconfig.json",
+      "type": "config",
+      "name": "tsconfig.json",
+      "filePath": "tsconfig.json",
+      "summary": "TypeScript compiler configuration targeting ES2022 with React JSX transform, path aliasing (@/*), and strict module resolution for bundler environments.",
+      "tags": [
+        "configuration",
+        "typescript",
+        "compiler-options"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:metadata.json",
+      "type": "config",
+      "name": "metadata.json",
+      "filePath": "metadata.json",
+      "summary": "AI Studio application metadata defining project name, description, and required frame permissions (microphone for speech practice features).",
+      "tags": [
+        "configuration",
+        "ai-studio",
+        "permissions",
+        "metadata"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:.env.example",
+      "type": "config",
+      "name": ".env.example",
+      "filePath": ".env.example",
+      "summary": "Environment template documenting required configuration: GEMINI_API_KEY for AI features and APP_URL for deployment references.",
+      "tags": [
+        "configuration",
+        "environment",
+        "template",
+        "secrets"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "README.md",
+      "summary": "Project documentation with AI Studio app link and local development setup instructions including Node.js prerequisites and GEMINI_API_KEY configuration.",
+      "tags": [
+        "documentation",
+        "getting-started",
+        "setup-guide"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/App.tsx:App",
+      "type": "function",
+      "name": "App",
+      "filePath": "src/App.tsx",
+      "lineRange": [
+        30,
+        183
+      ],
+      "summary": "Root application component managing navigation state, rendering the main layout with top nav, mobile menu, page content area with AnimatePresence transitions, and bottom mobile navigation.",
+      "tags": [
+        "root-component",
+        "layout",
+        "navigation",
+        "state-management"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/App.tsx:renderPage",
+      "type": "function",
+      "name": "renderPage",
+      "filePath": "src/App.tsx",
+      "lineRange": [
+        40,
+        51
+      ],
+      "summary": "Switch function that renders the appropriate page component based on currentPage state value.",
+      "tags": [
+        "router",
+        "page-renderer",
+        "switch-logic"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/components/HomePage.tsx:HomePage",
+      "type": "function",
+      "name": "HomePage",
+      "filePath": "src/components/HomePage.tsx",
+      "lineRange": [
+        10,
+        157
+      ],
+      "summary": "Home page component featuring animated hero section, horizontal topic scroll rail, resume learning card with progress bar, and daily mix video grid with VideoCard sub-component.",
+      "tags": [
+        "page-component",
+        "landing",
+        "hero",
+        "video-grid"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/HomePage.tsx:VideoCard",
+      "type": "function",
+      "name": "VideoCard",
+      "filePath": "src/components/HomePage.tsx",
+      "lineRange": [
+        165,
+        215
+      ],
+      "summary": "Reusable video card component with thumbnail, hover play button, duration badge, level/topic tags, title, view count, and bookmark action.",
+      "tags": [
+        "ui-component",
+        "video-card",
+        "card",
+        "reusable"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/components/ExplorePage.tsx:ExplorePage",
+      "type": "function",
+      "name": "ExplorePage",
+      "filePath": "src/components/ExplorePage.tsx",
+      "lineRange": [
+        11,
+        134
+      ],
+      "summary": "Explore page with search input, CEFR level filter chips, topic filter chips, results counter, sort dropdown, and filtered video grid with empty state.",
+      "tags": [
+        "page-component",
+        "search",
+        "filter",
+        "explore"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/ExplorePage.tsx:VideoCard",
+      "type": "function",
+      "name": "VideoCard",
+      "filePath": "src/components/ExplorePage.tsx",
+      "lineRange": [
+        142,
+        202
+      ],
+      "summary": "Video card variant for explore page with progress indicator for partially watched videos and bookmark action.",
+      "tags": [
+        "ui-component",
+        "video-card",
+        "explore-variant"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/components/StudyRoom.tsx:StudyRoom",
+      "type": "function",
+      "name": "StudyRoom",
+      "filePath": "src/components/StudyRoom.tsx",
+      "lineRange": [
+        26,
+        253
+      ],
+      "summary": "Study room page with Pomodoro timer (25 min), play/pause/reset controls, mood selector popup with 6 mood types, Kanban board with To Learn/Learning/Mastered columns, and mood-based recommendations.",
+      "tags": [
+        "page-component",
+        "timer",
+        "kanban",
+        "mood",
+        "focus"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/StudyRoom.tsx:KanbanCard",
+      "type": "function",
+      "name": "KanbanCard",
+      "filePath": "src/components/StudyRoom.tsx",
+      "lineRange": [
+        255,
+        268
+      ],
+      "summary": "Kanban card component displaying learning item with level badge, title, and progress bar with visual completion indicator.",
+      "tags": [
+        "ui-component",
+        "kanban",
+        "card",
+        "progress"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/components/PracticePage.tsx:PracticePage",
+      "type": "function",
+      "name": "PracticePage",
+      "filePath": "src/components/PracticePage.tsx",
+      "lineRange": [
+        28,
+        259
+      ],
+      "summary": "Practice session page with video player placeholder, mode switcher tabs (dictation/shadowing/speaking/writing), gap-fill exercise input, answer checking with feedback panel, and chunk navigation.",
+      "tags": [
+        "page-component",
+        "practice",
+        "exercise",
+        "feedback"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/components/MasteryLab.tsx:MasteryLab",
+      "type": "function",
+      "name": "MasteryLab",
+      "filePath": "src/components/MasteryLab.tsx",
+      "lineRange": [
+        9,
+        143
+      ],
+      "summary": "Mastery dashboard with statistics grid (streak, hours, XP, level), simplified Kanban board view linking to Study Room, and achievement cards with progress bars and earned status.",
+      "tags": [
+        "page-component",
+        "dashboard",
+        "achievements",
+        "stats"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/VocabPage.tsx:VocabPage",
+      "type": "function",
+      "name": "VocabPage",
+      "filePath": "src/components/VocabPage.tsx",
+      "lineRange": [
+        5,
+        143
+      ],
+      "summary": "Vocabulary page with collection cards, active review flashcard interface showing word, definition, context sentence, pronunciation/audio buttons, and recently added word list.",
+      "tags": [
+        "page-component",
+        "vocabulary",
+        "flashcard",
+        "learning"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/ProfilePage.tsx:ProfilePage",
+      "type": "function",
+      "name": "ProfilePage",
+      "filePath": "src/components/ProfilePage.tsx",
+      "lineRange": [
+        16,
+        155
+      ],
+      "summary": "User profile page with avatar editor, account info, learning preferences (target level, daily goal, interest tags), settings menu items, and stats summary bar.",
+      "tags": [
+        "page-component",
+        "profile",
+        "settings",
+        "user"
+      ],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/main.tsx",
+      "target": "file:src/App.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main.tsx",
+      "target": "file:src/index.css",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/App.tsx",
+      "target": "file:src/types.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/App.tsx",
+      "target": "file:src/components/HomePage.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/App.tsx",
+      "target": "file:src/components/ExplorePage.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/App.tsx",
+      "target": "file:src/components/StudyRoom.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/App.tsx",
+      "target": "file:src/components/PracticePage.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/App.tsx",
+      "target": "file:src/components/MasteryLab.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/App.tsx",
+      "target": "file:src/components/VocabPage.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/App.tsx",
+      "target": "file:src/components/ProfilePage.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/App.tsx",
+      "target": "function:src/App.tsx:App",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/App.tsx",
+      "target": "function:src/App.tsx:renderPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/App.tsx",
+      "target": "function:src/App.tsx:App",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/HomePage.tsx",
+      "target": "file:src/types.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/HomePage.tsx",
+      "target": "file:src/constants.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/HomePage.tsx",
+      "target": "function:src/components/HomePage.tsx:HomePage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/components/HomePage.tsx",
+      "target": "function:src/components/HomePage.tsx:VideoCard",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/components/HomePage.tsx",
+      "target": "function:src/components/HomePage.tsx:HomePage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/ExplorePage.tsx",
+      "target": "file:src/types.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/ExplorePage.tsx",
+      "target": "file:src/constants.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/ExplorePage.tsx",
+      "target": "function:src/components/ExplorePage.tsx:ExplorePage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/components/ExplorePage.tsx",
+      "target": "function:src/components/ExplorePage.tsx:VideoCard",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/components/ExplorePage.tsx",
+      "target": "function:src/components/ExplorePage.tsx:ExplorePage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/StudyRoom.tsx",
+      "target": "file:src/types.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/StudyRoom.tsx",
+      "target": "file:src/constants.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/StudyRoom.tsx",
+      "target": "function:src/components/StudyRoom.tsx:StudyRoom",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/components/StudyRoom.tsx",
+      "target": "function:src/components/StudyRoom.tsx:KanbanCard",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/components/StudyRoom.tsx",
+      "target": "function:src/components/StudyRoom.tsx:StudyRoom",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/PracticePage.tsx",
+      "target": "file:src/types.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/PracticePage.tsx",
+      "target": "file:src/constants.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/PracticePage.tsx",
+      "target": "function:src/components/PracticePage.tsx:PracticePage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/components/PracticePage.tsx",
+      "target": "function:src/components/PracticePage.tsx:PracticePage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/MasteryLab.tsx",
+      "target": "file:src/types.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/MasteryLab.tsx",
+      "target": "function:src/components/MasteryLab.tsx:MasteryLab",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/components/MasteryLab.tsx",
+      "target": "function:src/components/MasteryLab.tsx:MasteryLab",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/VocabPage.tsx",
+      "target": "function:src/components/VocabPage.tsx:VocabPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/components/VocabPage.tsx",
+      "target": "function:src/components/VocabPage.tsx:VocabPage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/ProfilePage.tsx",
+      "target": "function:src/components/ProfilePage.tsx:ProfilePage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/components/ProfilePage.tsx",
+      "target": "function:src/components/ProfilePage.tsx:ProfilePage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/constants.ts",
+      "target": "file:src/types.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "config:vite.config.ts",
+      "target": "file:src/main.tsx",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:tsconfig.json",
+      "target": "file:src/App.tsx",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:tsconfig.json",
+      "target": "file:src/types.ts",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:package.json",
+      "target": "file:src/main.tsx",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:metadata.json",
+      "target": "file:src/components/PracticePage.tsx",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:src/main.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:index.html",
+      "target": "file:src/main.tsx",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/index.css",
+      "target": "file:src/App.tsx",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/App.tsx",
+      "target": "file:src/components/StudyRoom.tsx",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/App.tsx",
+      "target": "file:src/components/MasteryLab.tsx",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ],
+  "layers": [
+    {
+      "id": "layer:entry",
+      "name": "Entry Layer",
+      "description": "Application bootstrap, HTML entry point, and global stylesheets that initialize the React app",
+      "nodeIds": [
+        "file:src/main.tsx",
+        "file:index.html",
+        "file:src/index.css"
+      ]
+    },
+    {
+      "id": "layer:app-shell",
+      "name": "Application Shell",
+      "description": "Core application component managing navigation state, routing between 7 pages, and global layout with Framer Motion transitions",
+      "nodeIds": [
+        "file:src/App.tsx"
+      ]
+    },
+    {
+      "id": "layer:pages",
+      "name": "Page Layer",
+      "description": "Page-level React components for distinct user flows: home dashboard, content exploration, practice sessions, study room, vocabulary management, progress tracking, and user profile",
+      "nodeIds": [
+        "file:src/components/HomePage.tsx",
+        "file:src/components/ExplorePage.tsx",
+        "file:src/components/StudyRoom.tsx",
+        "file:src/components/PracticePage.tsx",
+        "file:src/components/MasteryLab.tsx",
+        "file:src/components/VocabPage.tsx",
+        "file:src/components/ProfilePage.tsx"
+      ]
+    },
+    {
+      "id": "layer:shared",
+      "name": "Shared Domain",
+      "description": "Foundational TypeScript type definitions (CEFR levels, Video/Topic interfaces) and application constants imported by all page components",
+      "nodeIds": [
+        "file:src/types.ts",
+        "file:src/constants.ts"
+      ]
+    },
+    {
+      "id": "layer:project-support",
+      "name": "Project Support",
+      "description": "Build configuration, TypeScript compiler settings, dependency manifests, environment templates, and project documentation",
+      "nodeIds": [
+        "config:vite.config.ts",
+        "config:tsconfig.json",
+        "config:package.json",
+        "config:metadata.json",
+        "config:.env.example",
+        "document:README.md"
+      ]
+    }
+  ],
+  "tour": [
+    {
+      "order": 1,
+      "title": "Project Overview",
+      "description": "Start with the README.md to understand Dictation Mate 2.0's purpose as an AI-powered English learning platform. This document outlines the project structure, local development setup, and the required GEMINI_API_KEY for AI features.",
+      "nodeIds": [
+        "document:README.md"
+      ]
+    },
+    {
+      "order": 2,
+      "title": "Project Configuration",
+      "description": "The package.json defines the application's foundation with React 19, Vite for fast builds, Tailwind CSS 4 for styling, and the @google/genai SDK for AI-powered features. Understanding the dependency manifest helps contextualize the technical capabilities available throughout the codebase.",
+      "nodeIds": [
+        "config:package.json"
+      ]
+    },
+    {
+      "order": 3,
+      "title": "Application Entry Point",
+      "description": "The main.tsx file bootstraps the React application using StrictMode and renders the root App component. This is where the application lifecycle begins, mounting the component tree into the DOM and initializing the learning platform.",
+      "nodeIds": [
+        "file:src/main.tsx"
+      ],
+      "languageLesson": "React 19 StrictMode intentionally double-invokes certain functions to help detect side effects during development, making it easier to catch bugs before they reach production."
+    },
+    {
+      "order": 4,
+      "title": "Application Shell & Navigation",
+      "description": "App.tsx serves as the central orchestrator, managing navigation state across 7 distinct page routes with a sticky navigation bar and mobile-responsive layout. It implements smooth page transitions using Framer Motion animation libraries, providing the structural foundation for all user interactions.",
+      "nodeIds": [
+        "file:src/App.tsx"
+      ]
+    },
+    {
+      "order": 5,
+      "title": "Core Type Definitions",
+      "description": "The types.ts file defines the foundational TypeScript interfaces that establish the domain vocabulary for the entire application. CEFR proficiency levels (A1-C2), Video and Topic structures, Mood states, and Kanban tracking types create a type-safe contract between all components and enable IDE autocomplete for developers.",
+      "nodeIds": [
+        "file:src/types.ts"
+      ],
+      "languageLesson": "TypeScript union types like 'Page' create exhaustive type checking - when you switch on a Page type, the compiler ensures you handle every possible value, preventing runtime navigation bugs."
+    },
+    {
+      "order": 6,
+      "title": "Application Constants",
+      "description": "The constants.ts file centralizes shared data like the 5 topic categories and MOCK_VIDEOS for development testing. Separating static data from component logic enables consistent content across the application and simplifies updates to topic organization.",
+      "nodeIds": [
+        "file:src/constants.ts"
+      ]
+    },
+    {
+      "order": 7,
+      "title": "Home Dashboard",
+      "description": "HomePage.tsx implements the landing experience with a hero section, topic rails for content discovery, resume learning progress indicators, and a daily video mix grid. This is the first touchpoint for returning learners, surfacing personalized content recommendations.",
+      "nodeIds": [
+        "file:src/components/HomePage.tsx"
+      ]
+    },
+    {
+      "order": 8,
+      "title": "Content Discovery",
+      "description": "ExplorePage.tsx provides the search and filtering interface for finding learning content. Users can filter by CEFR proficiency levels (A1 through C2) and topic categories, with empty state handling when no videos match the criteria.",
+      "nodeIds": [
+        "file:src/components/ExplorePage.tsx"
+      ]
+    },
+    {
+      "order": 9,
+      "title": "Practice Session",
+      "description": "PracticePage.tsx is the core learning interface featuring a video player with 4 practice mode tabs: dictation, shadowing, speaking, and writing. It implements gap-fill exercises with answer checking, feedback panels for learning reinforcement, and progress tracking to gamify the experience.",
+      "nodeIds": [
+        "file:src/components/PracticePage.tsx"
+      ]
+    },
+    {
+      "order": 10,
+      "title": "Virtual Study Room",
+      "description": "StudyRoom.tsx creates a focused learning environment with a Pomodoro-style timer for time management, a mood selector with 6 emotional states, and a Kanban board tracking learning stages (To Learn, Learning, Mastered). Content recommendations adapt based on the selected mood to match the user's current mindset.",
+      "nodeIds": [
+        "file:src/components/StudyRoom.tsx"
+      ]
+    },
+    {
+      "order": 11,
+      "title": "Progress Dashboard",
+      "description": "MasteryLab.tsx displays learning statistics including streaks, study hours, XP accumulation, and level progression. The simplified Kanban view provides at-a-glance progress tracking, while achievement badges create a gamification loop that motivates continued engagement.",
+      "nodeIds": [
+        "file:src/components/MasteryLab.tsx"
+      ]
+    },
+    {
+      "order": 12,
+      "title": "Vocabulary Management",
+      "description": "VocabPage.tsx manages the user's personal lexicon with collection grids, an active review flashcard interface featuring pronunciation guides and audio controls, and a recently added word list with visual mastery indicators. This spaced repetition system reinforces vocabulary retention.",
+      "nodeIds": [
+        "file:src/components/VocabPage.tsx"
+      ]
+    },
+    {
+      "order": 13,
+      "title": "User Profile",
+      "description": "ProfilePage.tsx provides account management with avatar display, learning preferences editor for target CEFR level, daily study goals, and topic interests. The settings menu and stats summary bar give users control over their personalized learning journey.",
+      "nodeIds": [
+        "file:src/components/ProfilePage.tsx"
+      ]
+    },
+    {
+      "order": 14,
+      "title": "Build & Styling Configuration",
+      "description": "The vite.config.ts configures the modern build pipeline with React plugin support, Tailwind CSS Vite integration for utility-first styling, and @/ path aliasing for cleaner imports. The index.css imports Tailwind CSS 4, establishing the design system's foundation across all components.",
+      "nodeIds": [
+        "config:vite.config.ts",
+        "file:src/index.css"
+      ],
+      "languageLesson": "Vite's path aliasing (@/) eliminates relative path hell (../../components/Button) by mapping to absolute project paths, making refactors safer and imports more readable across deeply nested component trees."
+    },
+    {
+      "order": 15,
+      "title": "TypeScript Configuration",
+      "description": "The tsconfig.json establishes strict type checking, the React JSX transform for cleaner component syntax, and ES2020 target compatibility. This configuration ensures type safety across the 7-page application and enables modern JavaScript features while maintaining browser compatibility.",
+      "nodeIds": [
+        "config:tsconfig.json"
+      ]
+    }
+  ]
+}
