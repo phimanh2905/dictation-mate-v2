@@ -1,37 +1,37 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Mic, Play, RotateCcw, Sparkles, ChevronLeft, ChevronRight, Volume2, CheckCircle2, Square, Info } from 'lucide-react';
+import { 
+  Mic, Play, RotateCcw, Sparkles, ChevronLeft, ChevronRight, 
+  Volume2, CheckCircle2, Square, Info, EyeOff, Monitor 
+} from 'lucide-react';
 
 type SpeakingState = 'ready' | 'recording' | 'analyzing' | 'result';
 
 export default function SpeakingPanel() {
   const [state, setState] = useState<SpeakingState>('ready');
-  const [activeChunk, setActiveChunk] = useState(3);
+  const [activeQuestion, setActiveQuestion] = useState(1);
+  const totalQuestions = 901;
+  const questions = Array.from({ length: 10 }, (_, i) => i + 1); // Mock first 10 questions
 
   const words = [
     { text: 'the', score: 95, status: 'exact' },
-    { text: 'key', score: 92, status: 'exact' },
-    { text: 'is', score: 98, status: 'exact' },
-    { text: 'to', score: 90, status: 'exact' },
-    { text: 'research', score: 88, status: 'close' },
-    { text: 'market', score: 94, status: 'exact' },
-    { text: 'rates', score: 65, status: 'wrong' },
-    { text: 'beforehand', score: 82, status: 'close' },
+    { text: 'key', score: 100, status: 'exact' },
+    { text: 'is', score: 90, status: 'exact' },
+    { text: 'to', score: 88, status: 'exact' },
+    { text: 'research', score: 75, status: 'close' },
+    { text: 'market', score: 92, status: 'exact' },
+    { text: 'rates', score: 45, status: 'wrong' },
+    { text: 'beforehand', score: 80, status: 'exact' },
   ];
 
-  const handleRecord = () => {
-    setState('recording');
-  };
-
+  const handleRecord = () => setState('recording');
   const handleStop = () => {
     setState('analyzing');
-    // Simulate analysis delay
-    setTimeout(() => {
-      setState('result');
-    }, 1500);
+    setTimeout(() => setState('result'), 1500);
   };
-
-  const handleRetry = () => {
+  const handleRetry = () => setState('ready');
+  const handleNextQuestion = () => {
+    setActiveQuestion(prev => Math.min(totalQuestions, prev + 1));
     setState('ready');
   };
 
@@ -40,59 +40,67 @@ export default function SpeakingPanel() {
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
-      className="flex-1 flex flex-col h-full overflow-y-auto no-scrollbar p-6 space-y-6"
+      className="flex-1 flex flex-col p-4 overflow-y-auto no-scrollbar bg-gray-50"
     >
-      <div className="max-w-2xl mx-auto w-full flex flex-col bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
-        
-        {/* 1. Chunk Navigation Bar */}
-        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-white shrink-0">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1">
-              <button className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 transition-colors">
-                <ChevronLeft size={20} />
-              </button>
-              <span className="text-sm font-bold text-emerald-600">Chunk {activeChunk + 1} of 12</span>
-              <button className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 transition-colors">
-                <ChevronRight size={20} />
-              </button>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="w-24 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-              <div className="h-full bg-emerald-500 rounded-full w-1/3" />
-            </div>
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">33% Complete</span>
+      <div className="max-w-3xl mx-auto w-full space-y-4">
+        {/* 1. Header Title */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-baseline gap-2">
+            <h2 className="text-lg font-bold text-gray-900">Phát âm</h2>
+            <span className="text-gray-500 text-xs">(Câu hỏi {activeQuestion}/{totalQuestions})</span>
           </div>
         </div>
 
-        {/* 2. Instruction Bar */}
-        <div className="px-6 py-3 bg-emerald-50/50 border-b border-emerald-100 flex items-center gap-2">
-          <Volume2 size={16} className="text-emerald-600" />
-          <span className="text-xs font-bold text-emerald-800">Nghe và nói lại câu sau:</span>
+        {/* 2. Question Navigation Bar */}
+        <div className="flex items-center gap-2">
+          <button className="p-1.5 bg-gray-200 rounded-full text-gray-600 hover:bg-gray-300 transition-colors">
+            <ChevronLeft size={18} />
+          </button>
+          
+          <div className="flex-1 flex gap-2 overflow-x-auto no-scrollbar py-1">
+            {questions.map((q) => (
+              <button
+                key={q}
+                onClick={() => setActiveQuestion(q)}
+                className={`shrink-0 px-4 py-2 rounded-xl font-bold text-sm transition-all ${
+                  activeQuestion === q
+                    ? 'bg-blue-600 text-white shadow-md shadow-blue-100'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                Câu: {q}
+              </button>
+            ))}
+            <div className="shrink-0 w-10 h-10 bg-gray-200 rounded-xl opacity-50" />
+          </div>
+
+          <button className="p-1.5 bg-gray-200 rounded-full text-gray-600 hover:bg-gray-300 transition-colors">
+            <ChevronRight size={18} />
+          </button>
         </div>
 
-        {/* 3. Target Text Card */}
-        <div className="p-8 text-center space-y-6">
-          <div className="space-y-2">
-            <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Target Sentence</h3>
-            <p className="text-2xl font-bold text-slate-800 leading-relaxed">
+        {/* 3. Target Sentence Area */}
+        <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm space-y-4 text-center">
+          <div className="space-y-1">
+            <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Target Sentence</h3>
+            <p className="text-xl font-bold text-gray-800 leading-relaxed font-mono">
               "the key is to research market rates beforehand"
             </p>
           </div>
           
-          <div className="flex justify-center gap-3">
-            <button className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-600 rounded-xl font-bold hover:bg-emerald-100 transition-all">
-              <Play size={18} fill="currentColor" />
+          <div className="flex justify-center gap-2">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-xs font-bold hover:bg-blue-100 transition-all">
+              <Volume2 size={16} />
               Nghe audio chunk
             </button>
-            <button className="px-4 py-2 bg-slate-50 text-slate-600 rounded-xl font-bold hover:bg-slate-100 transition-all text-xs">
+            <button className="px-3 py-1.5 bg-gray-50 text-gray-600 rounded-lg font-bold hover:bg-gray-100 transition-all text-[10px]">
               IPA
             </button>
           </div>
         </div>
 
-        {/* 4. Recorder Section */}
-        <div className="p-8 bg-slate-50/50 border-t border-slate-100 flex flex-col items-center gap-6">
+        {/* 4. Recorder & Results Section */}
+        <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm min-h-[220px] flex flex-col items-center justify-center">
           <AnimatePresence mode="wait">
             {state === 'ready' && (
               <motion.div 
@@ -100,17 +108,17 @@ export default function SpeakingPanel() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
-                className="flex flex-col items-center gap-4"
+                className="flex flex-col items-center gap-3"
               >
                 <button
                   onClick={handleRecord}
-                  className="w-20 h-20 rounded-full bg-emerald-600 text-white flex items-center justify-center shadow-xl shadow-emerald-200 hover:bg-emerald-700 hover:scale-105 transition-all active:scale-95 group"
+                  className="w-16 h-16 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-200 hover:bg-blue-700 hover:scale-105 transition-all active:scale-95 group"
                 >
-                  <Mic size={32} />
+                  <Mic size={28} />
                 </button>
                 <div className="text-center">
-                  <p className="text-sm font-bold text-slate-700">Nhấn để bắt đầu nói</p>
-                  <p className="text-[10px] text-slate-400 uppercase tracking-wider mt-1">Click để bắt đầu ghi âm</p>
+                  <p className="text-xs font-bold text-gray-700">Nhấn để bắt đầu nói</p>
+                  <p className="text-[9px] text-gray-400 uppercase tracking-wider mt-0.5">Click để bắt đầu ghi âm</p>
                 </div>
               </motion.div>
             )}
@@ -121,29 +129,29 @@ export default function SpeakingPanel() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
-                className="flex flex-col items-center gap-6 w-full"
+                className="flex flex-col items-center gap-4 w-full"
               >
-                <div className="flex items-center gap-3 text-emerald-600 font-bold animate-pulse">
-                  <div className="w-2.5 h-2.5 bg-emerald-600 rounded-full" />
+                <div className="flex items-center gap-2 text-blue-600 text-sm font-bold animate-pulse">
+                  <div className="w-2 h-2 bg-blue-600 rounded-full" />
                   Recording... 0:03
                 </div>
                 
-                <div className="w-full h-12 bg-emerald-50 rounded-2xl flex items-center justify-center gap-1 px-4">
+                <div className="w-full max-w-sm h-10 bg-blue-50 rounded-xl flex items-center justify-center gap-1 px-3">
                   {[...Array(24)].map((_, i) => (
                     <motion.div 
                       key={i} 
-                      animate={{ height: [10, Math.random() * 30 + 10, 10] }}
+                      animate={{ height: [8, Math.random() * 20 + 8, 8] }}
                       transition={{ repeat: Infinity, duration: 0.5, delay: i * 0.05 }}
-                      className="w-1 bg-emerald-400 rounded-full" 
+                      className="w-1 bg-blue-400 rounded-full" 
                     />
                   ))}
                 </div>
 
                 <button
                   onClick={handleStop}
-                  className="w-16 h-16 rounded-full bg-rose-500 text-white flex items-center justify-center shadow-xl shadow-rose-200 hover:bg-rose-600 transition-all active:scale-95"
+                  className="w-12 h-12 rounded-full bg-rose-500 text-white flex items-center justify-center shadow-lg shadow-rose-200 hover:bg-rose-600 transition-all active:scale-95"
                 >
-                  <Square size={24} fill="currentColor" />
+                  <Square size={20} fill="currentColor" />
                 </button>
               </motion.div>
             )}
@@ -154,10 +162,10 @@ export default function SpeakingPanel() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="flex flex-col items-center gap-4 py-4"
+                className="flex flex-col items-center gap-3 py-2"
               >
-                <div className="w-12 h-12 border-4 border-emerald-100 border-t-emerald-600 rounded-full animate-spin" />
-                <p className="text-sm font-bold text-slate-600">Đang phân tích phát âm...</p>
+                <div className="w-10 h-10 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin" />
+                <p className="text-xs font-bold text-gray-600">Đang phân tích giọng nói...</p>
               </motion.div>
             )}
 
@@ -166,33 +174,32 @@ export default function SpeakingPanel() {
                 key="result"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="w-full space-y-8"
+                className="w-full space-y-5"
               >
                 {/* Score Display */}
-                <div className="flex flex-col items-center gap-2">
-                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Overall Score</div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-4xl font-black text-emerald-600">85%</span>
-                    <div className="w-3 h-3 bg-emerald-500 rounded-full shadow-[0_0_12px_rgba(16,185,129,0.5)]" />
+                <div className="flex flex-col items-center gap-1">
+                  <div className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Overall Score</div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-3xl font-black text-emerald-600">🎯 SCORE: 85% 🟢</span>
                   </div>
                 </div>
 
                 {/* Comparison Result */}
-                <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm space-y-4">
-                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                    <Info size={12} />
+                <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 shadow-sm space-y-3">
+                  <div className="text-[9px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-1.5">
+                    <Info size={10} />
                     YOUR SPEECH vs TRANSCRIPT
                   </div>
-                  <div className="flex flex-wrap justify-center gap-x-3 gap-y-4">
+                  <div className="flex flex-wrap justify-center gap-x-2 gap-y-3">
                     {words.map((word, idx) => (
-                      <div key={idx} className="flex flex-col items-center gap-1">
-                        <span className={`text-xl font-bold transition-colors ${
+                      <div key={idx} className="flex flex-col items-center gap-0.5">
+                        <span className={`text-lg font-bold transition-colors ${
                           word.status === 'exact' ? 'text-emerald-500' : 
                           word.status === 'close' ? 'text-amber-500' : 'text-rose-500'
                         }`}>
                           {word.text}
                         </span>
-                        <div className={`w-1.5 h-1.5 rounded-full ${
+                        <div className={`w-1 h-1 rounded-full ${
                           word.status === 'exact' ? 'bg-emerald-500' : 
                           word.status === 'close' ? 'bg-amber-500' : 'bg-rose-500'
                         }`} />
@@ -202,38 +209,24 @@ export default function SpeakingPanel() {
                 </div>
 
                 {/* Feedback Box */}
-                <div className="bg-amber-50 border border-amber-100 rounded-2xl p-5 flex gap-4">
-                  <div className="w-10 h-10 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center shrink-0">
-                    <Sparkles size={20} />
+                <div className="bg-amber-50 border border-amber-100 rounded-xl p-3.5 flex gap-3">
+                  <div className="w-8 h-8 bg-amber-100 text-amber-600 rounded-lg flex items-center justify-center shrink-0">
+                    <Sparkles size={16} />
                   </div>
-                  <div className="space-y-1">
-                    <h4 className="text-sm font-bold text-amber-900 flex items-center gap-2">
+                  <div className="space-y-0.5">
+                    <h4 className="text-xs font-bold text-amber-900 flex items-center gap-1.5">
                       Pronunciation Tip
                     </h4>
-                    <p className="text-sm text-amber-800 leading-relaxed">
+                    <p className="text-xs text-amber-800 leading-relaxed">
                       ⚠️ <span className="font-bold">"rates"</span> nghe giống <span className="font-bold">"rats"</span>. Luyện âm <span className="font-bold">/eɪ/</span> trong "rates".
                     </p>
                   </div>
-                </div>
-
-                {/* Actions */}
-                <div className="flex gap-4">
-                  <button 
-                    onClick={handleRetry}
-                    className="flex-1 py-4 bg-white border border-slate-200 text-slate-600 rounded-2xl font-bold hover:bg-slate-50 transition-all flex items-center justify-center gap-2"
-                  >
-                    <RotateCcw size={18} />
-                    Thử lại
-                  </button>
-                  <button className="flex-[2] py-4 bg-emerald-600 text-white rounded-2xl font-bold hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-100 flex items-center justify-center gap-2">
-                    Next Chunk
-                    <ChevronRight size={18} />
-                  </button>
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
         </div>
+
       </div>
     </motion.div>
   );

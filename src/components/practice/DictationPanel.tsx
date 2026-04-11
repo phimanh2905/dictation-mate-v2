@@ -1,137 +1,180 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Volume2, Lightbulb, CheckCircle2, XCircle, RefreshCw, ChevronRight } from 'lucide-react';
+import { 
+  Volume2, Lightbulb, CheckCircle2, XCircle, RefreshCw, 
+  ChevronRight, ChevronLeft, Repeat, Sparkles, Flame,
+  EyeOff, Monitor, Play
+} from 'lucide-react';
+
+type DictationStatus = 'idle' | 'correct' | 'wrong';
 
 export default function DictationPanel() {
   const [input, setInput] = useState('');
-  const [showHint, setShowHint] = useState(false);
-  const [status, setStatus] = useState<'idle' | 'correct' | 'wrong'>('idle');
+  const [status, setStatus] = useState<DictationStatus>('idle');
+  const [activeQuestion, setActiveQuestion] = useState(1);
+  
+  const totalQuestions = 901;
+  const questions = Array.from({ length: 10 }, (_, i) => i + 1); // Mock first 10 questions
 
   const checkAnswer = () => {
-    if (input.toLowerCase().trim() === 'market rates') {
+    if (input.toLowerCase().trim() === 'the key is to research market rates beforehand') {
       setStatus('correct');
     } else {
       setStatus('wrong');
     }
   };
 
+  const handleRetry = () => {
+    setStatus('idle');
+    setInput('');
+  };
+
+  // Mock hint words for visualization
+  const hintWords = [
+    { length: 3 },
+    { length: 7 },
+    { length: 2 },
+    { length: 1 },
+    { length: 6 },
+    { length: 3 },
+  ];
+
   return (
     <motion.div 
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
-      className="flex-1 flex flex-col p-6 overflow-y-auto no-scrollbar"
+      className="flex-1 flex flex-col p-4 overflow-y-auto no-scrollbar bg-gray-50"
     >
-      <div className="max-w-2xl mx-auto w-full bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
-        {/* Header Section */}
-        <div className="px-8 py-6 border-b border-slate-100">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-bold text-slate-800">Chunk 4 of 12</h3>
-              <div className="flex items-center gap-3 mt-2">
-                <div className="w-32 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-blue-500 rounded-full w-1/3" />
-                </div>
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">33% Complete</span>
-              </div>
-            </div>
-            
-            <button className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center hover:bg-blue-100 transition-all active:scale-95 shadow-sm">
-              <Volume2 size={24} />
+      <div className="max-w-3xl mx-auto w-full space-y-4">
+        {/* 1. Header Title & Utility Buttons */}
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-baseline gap-2">
+            <h2 className="text-lg font-bold text-gray-900">Chép chính tả</h2>
+            <span className="text-gray-500 text-xs">(Câu hỏi {activeQuestion}/{totalQuestions})</span>
+          </div>
+          
+          <div className="flex gap-2">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-medium text-gray-700 hover:bg-gray-50 transition-colors shadow-sm">
+              <EyeOff size={14} />
+              Ẩn video
+            </button>
+            <button className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-medium text-gray-700 hover:bg-gray-50 transition-colors shadow-sm">
+              <Monitor size={14} />
+              Phím tắt
             </button>
           </div>
         </div>
 
-        {/* Main Content Area */}
-        <div className="p-8 space-y-12">
-          <div className="text-center space-y-8">
-            <div className="text-2xl text-slate-700 leading-relaxed font-medium">
-              "...the key is to research{' '}
-              <span className={`inline-block min-w-[140px] border-b-4 px-3 py-1 rounded-lg transition-all ${
-                status === 'correct' ? 'border-emerald-500 text-emerald-600 bg-emerald-50' : 
-                status === 'wrong' ? 'border-rose-500 text-rose-600 bg-rose-50' : 
-                'border-blue-400 bg-slate-50 text-slate-400'
-              }`}>
-                {status === 'correct' ? (
-                  <span className="flex items-center justify-center gap-2">
-                    market rates <CheckCircle2 size={20} />
-                  </span>
-                ) : status === 'wrong' ? (
-                  <span className="flex items-center justify-center gap-2">
-                    {input || '_____'} <XCircle size={20} />
-                  </span>
-                ) : (
-                  showHint ? 'market rates' : '[________]'
-                )}
-              </span>
-              {' '}beforehand..."
-            </div>
-
-            {status === 'wrong' && (
-              <div className="text-emerald-600 font-bold text-sm bg-emerald-50 py-2 px-4 rounded-xl inline-block">
-                Correct answer: market rates
-              </div>
-            )}
-
-            <input
-              type="text"
-              value={input}
-              disabled={status !== 'idle'}
-              onChange={(e) => {
-                setInput(e.target.value);
-                if (status !== 'idle') setStatus('idle');
-              }}
-              placeholder="Type what you hear..."
-              className={`w-full px-8 py-5 bg-slate-50 border-2 rounded-2xl text-xl font-bold text-center transition-all focus:outline-none focus:ring-4 focus:ring-blue-500/10 ${
-                status === 'correct' ? 'border-emerald-500 bg-white' : 
-                status === 'wrong' ? 'border-rose-500 bg-white' : 
-                'border-slate-200 focus:border-blue-500 focus:bg-white'
-              }`}
-              onKeyDown={(e) => e.key === 'Enter' && checkAnswer()}
-            />
+        {/* 2. Question Navigation Bar */}
+        <div className="flex items-center gap-2">
+          <button className="p-1.5 bg-gray-200 rounded-full text-gray-600 hover:bg-gray-300 transition-colors">
+            <ChevronLeft size={18} />
+          </button>
+          
+          <div className="flex-1 flex gap-2 overflow-x-auto no-scrollbar py-1">
+            {questions.map((q) => (
+              <button
+                key={q}
+                onClick={() => setActiveQuestion(q)}
+                className={`shrink-0 px-4 py-2 rounded-xl font-bold text-sm transition-all ${
+                  activeQuestion === q
+                    ? 'bg-blue-600 text-white shadow-md shadow-blue-100'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                Câu: {q}
+              </button>
+            ))}
+            <div className="shrink-0 w-10 h-10 bg-gray-200 rounded-xl opacity-50" />
           </div>
+
+          <button className="p-1.5 bg-gray-200 rounded-full text-gray-600 hover:bg-gray-300 transition-colors">
+            <ChevronRight size={18} />
+          </button>
         </div>
 
-        {/* Footer Actions */}
-        <div className="px-8 py-6 bg-slate-50 border-t border-slate-100 flex gap-4">
-          <button
-            onClick={() => setShowHint(true)}
-            disabled={status !== 'idle'}
-            className="flex-1 py-4 bg-white border border-slate-200 text-slate-600 rounded-2xl font-bold hover:bg-slate-100 transition-all flex items-center justify-center gap-2 active:scale-95 shadow-sm disabled:opacity-50"
-          >
-            <Lightbulb size={20} className="text-amber-500" />
-            Hint
+        {/* 3. Input Area */}
+        <div className="relative">
+          <textarea
+            value={input}
+            onChange={(e) => {
+              setInput(e.target.value);
+              if (status !== 'idle') setStatus('idle');
+            }}
+            placeholder="Nhập những gì bạn nghe được..."
+            className={`w-full h-24 p-3 rounded-xl text-base font-medium font-mono transition-all focus:outline-none border-2 ${
+              status === 'correct' ? 'border-emerald-500 bg-emerald-50 text-emerald-700' :
+              status === 'wrong' ? 'border-rose-500 bg-rose-50 text-rose-700' :
+              'border-gray-300 bg-gray-50 text-gray-700 focus:border-blue-500 focus:bg-white'
+            } resize-none`}
+          />
+        </div>
+
+        {/* 4. Hint Visualization (Dashed Boxes) */}
+        <div className="flex flex-wrap gap-2">
+          {hintWords.map((word, idx) => (
+            <div 
+              key={idx} 
+              className="px-2 py-1 border-2 border-dashed border-gray-200 rounded-lg flex items-center justify-center min-w-[32px]"
+            >
+              <span className="text-rose-500 font-bold tracking-widest text-sm">
+                {Array(word.length).fill('*').join('')}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {/* 5. Bottom Controls */}
+        <div className="flex items-center gap-3 pt-2">
+          <button className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-200 transition-colors">
+            <Lightbulb size={20} />
           </button>
-          <button
-            onClick={status === 'idle' ? checkAnswer : () => { setStatus('idle'); setInput(''); setShowHint(false); }}
-            disabled={status === 'idle' && !input.trim()}
-            className={`flex-[2] py-4 rounded-2xl font-bold transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2 ${
-              status === 'idle' 
-                ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-blue-500/25' 
-                : 'bg-slate-900 text-white hover:bg-black'
+          
+          <button 
+            onClick={checkAnswer}
+            className="flex-1 h-12 bg-blue-600 text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-blue-700 transition-all shadow-md shadow-blue-100 active:scale-[0.98]"
+          >
+            <Play size={20} fill="currentColor" />
+            Phát lại
+          </button>
+
+          <button 
+            className={`px-6 h-12 rounded-xl font-bold flex items-center justify-center gap-2 transition-all ${
+              status === 'correct' 
+                ? 'bg-emerald-500 text-white hover:bg-emerald-600' 
+                : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
             }`}
           >
-            {status === 'idle' ? 'Check Answer' : 'Try Again'}
-            {status === 'idle' ? <CheckCircle2 size={20} /> : <RefreshCw size={18} />}
+            Tiếp
+            <ChevronRight size={18} />
           </button>
         </div>
-      </div>
 
-      {/* Next Step Button (Only if correct) */}
-      <AnimatePresence>
-        {status === 'correct' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="max-w-2xl mx-auto w-full mt-6"
-          >
-            <button className="w-full py-4 bg-emerald-600 text-white rounded-2xl font-bold hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2">
-              Next Chunk
-              <ChevronRight size={20} />
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+        {/* Feedback Messages */}
+        <AnimatePresence>
+          {status === 'correct' && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="p-4 bg-emerald-50 border border-emerald-100 rounded-2xl flex items-center gap-3 text-emerald-700 font-bold"
+            >
+              <CheckCircle2 size={20} />
+              Chính xác! Bạn đã hoàn thành câu hỏi này.
+            </motion.div>
+          )}
+          {status === 'wrong' && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="p-4 bg-rose-50 border border-rose-100 rounded-2xl flex items-center gap-3 text-rose-700 font-bold"
+            >
+              <XCircle size={20} />
+              Chưa đúng, hãy thử nghe lại nhé!
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </motion.div>
   );
 }
