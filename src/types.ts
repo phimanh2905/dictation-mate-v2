@@ -1,4 +1,4 @@
-export type Page = 'home' | 'explore' | 'study-room' | 'practice' | 'mastery' | 'vocab' | 'profile';
+export type Page = 'home' | 'explore' | 'study-room' | 'practice' | 'mastery' | 'vocab' | 'profile' | 'create' | 'leaderboard' | 'analytics' | 'settings';
 
 export type CEFRLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
 

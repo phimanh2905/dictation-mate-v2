@@ -166,13 +166,18 @@ function VideoCard({ video, onClick }: VideoCardProps) {
             New
           </div>
         )}
+        {/* View Count Badge */}
+        <div className="absolute top-2 right-2 px-2 py-1 bg-black/50 backdrop-blur-md text-white text-[10px] font-bold rounded flex items-center gap-1">
+          <TrendingUp size={12} />
+          {video.views || '0'}
+        </div>
       </div>
       <div className="p-4">
         <div className="flex items-center gap-2 mb-2">
           <span className="px-2 py-0.5 bg-gray-100 text-gray-700 text-[10px] font-bold rounded-full uppercase tracking-wider">
             {video.level}
           </span>
-          <span className="text-[10px] text-gray-500 font-medium">{video.topic}</span>
+          <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">{video.topic}</span>
         </div>
         <h3 className="font-bold text-gray-900 text-sm line-clamp-2 mb-3 group-hover:text-blue-600 transition-colors">
           {video.title}
