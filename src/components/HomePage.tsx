@@ -1,4 +1,5 @@
 import { motion } from 'motion/react';
+import { useTranslation } from 'react-i18next';
 import { 
   Play, 
   Flame, 
@@ -21,13 +22,14 @@ interface HomePageProps {
 }
 
 export default function HomePage({ onNavigate, onAddVideo }: HomePageProps) {
+  const { t } = useTranslation();
   const resumeVideo = MOCK_VIDEOS[0];
   const dailyMix = MOCK_VIDEOS.slice(1);
 
   const quickStats = [
-    { icon: Flame, label: 'Streak', value: '12 days', color: 'orange' },
+    { icon: Flame, label: t('mastery.streak'), value: '12 days', color: 'orange' },
     { icon: Target, label: 'XP Today', value: '450 XP', color: 'blue' },
-    { icon: BookOpen, label: 'Words', value: '128 learned', color: 'emerald' },
+    { icon: BookOpen, label: t('nav.vocab'), value: '128 learned', color: 'emerald' },
     { icon: Clock, label: 'Time', value: '45 mins', color: 'violet' },
   ];
 
@@ -41,10 +43,10 @@ export default function HomePage({ onNavigate, onAddVideo }: HomePageProps) {
             animate={{ opacity: 1, y: 0 }}
             className="text-3xl font-bold mb-2"
           >
-            Welcome back, Phạm Anh! 👋
+            {t('home.welcome', { name: 'Phạm Anh' })}
           </motion.h1>
           <p className="text-blue-100 mb-6 font-medium">
-            You have a 12-day streak. Keep it up! Today's goal is almost reached.
+            {t('home.streakMessage', { count: 12 })} Today's goal is almost reached.
           </p>
           <div className="flex flex-wrap gap-3">
             <button 
@@ -52,14 +54,14 @@ export default function HomePage({ onNavigate, onAddVideo }: HomePageProps) {
               className="px-5 py-2.5 bg-white text-blue-600 rounded-full font-bold text-sm flex items-center gap-2 hover:bg-blue-50 transition-all shadow-lg active:scale-95"
             >
               <Play size={18} fill="currentColor" />
-              Continue Learning
+              {t('home.continue')}
             </button>
             <button 
               onClick={() => onNavigate('statistics')}
               className="px-5 py-2.5 bg-blue-500/30 backdrop-blur-md border border-white/20 text-white rounded-full font-bold text-sm hover:bg-blue-500/40 transition-all active:scale-95"
             >
               <BarChart3 size={18} />
-              View Progress
+              {t('home.viewProgress')}
             </button>
           </div>
         </div>

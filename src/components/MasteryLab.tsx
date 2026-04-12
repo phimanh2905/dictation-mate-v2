@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
-import { Trophy, Flame, Clock, Star, Target, TrendingUp, ChevronRight, Zap, Award } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { Trophy, Flame, Clock, Star, Target, TrendingUp, ChevronRight, Zap, Award, CheckCircle2 } from 'lucide-react';
 import { Page } from '../types';
 
 interface MasteryLabProps {
@@ -7,11 +8,13 @@ interface MasteryLabProps {
 }
 
 export default function MasteryLab({ onNavigate }: MasteryLabProps) {
+  const { t } = useTranslation();
+  
   const stats = [
-    { label: 'Streak', value: '12 Days', icon: Flame, color: 'text-orange-500', bg: 'bg-orange-50' },
-    { label: 'Studied', value: '47 Hours', icon: Clock, color: 'text-blue-500', bg: 'bg-blue-50' },
-    { label: 'XP Earned', value: '2,340', icon: Star, color: 'text-yellow-500', bg: 'bg-yellow-50' },
-    { label: 'Level', value: 'B2', icon: Target, color: 'text-purple-500', bg: 'bg-purple-50' },
+    { label: t('mastery.streak'), value: '12 Days', icon: Flame, color: 'text-orange-500', bg: 'bg-orange-50' },
+    { label: t('mastery.hours'), value: '47 Hours', icon: Clock, color: 'text-blue-500', bg: 'bg-blue-50' },
+    { label: t('mastery.xp'), value: '2,340', icon: Star, color: 'text-yellow-500', bg: 'bg-yellow-50' },
+    { label: t('mastery.level'), value: 'B2', icon: Target, color: 'text-purple-500', bg: 'bg-purple-50' },
   ];
 
   const achievements = [
@@ -46,6 +49,49 @@ export default function MasteryLab({ onNavigate }: MasteryLabProps) {
           </motion.div>
         ))}
       </div>
+
+      {/* Streak Calendar Section */}
+      <section className="bg-white rounded-3xl border border-gray-200 p-8 shadow-sm">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-orange-100 rounded-2xl flex items-center justify-center text-orange-500">
+              <Flame size={24} fill="currentColor" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold">{t('mastery.calendar')}</h2>
+              <p className="text-sm text-gray-500">🔥 12 day streak</p>
+            </div>
+          </div>
+          <div className="hidden sm:flex items-center gap-2">
+            <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Best Streak: 45 days</span>
+          </div>
+        </div>
+        
+        {/* 7-day mini calendar */}
+        <div className="grid grid-cols-7 gap-2 sm:gap-4">
+          {['M','T','W','T','F','S','S'].map((day, i) => (
+            <div key={i} className="flex flex-col items-center gap-3">
+              <div className={`w-10 h-10 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center text-lg transition-all ${
+                i < 5 
+                  ? 'bg-gradient-to-br from-emerald-400 to-teal-500 text-white shadow-lg shadow-emerald-100' 
+                  : i === 5 
+                    ? 'bg-orange-100 text-orange-500 border-2 border-orange-200 animate-pulse'
+                    : 'bg-gray-50 text-gray-300 border border-gray-100'
+              }`}>
+                {i < 5 ? <CheckCircle2 size={24} /> : i === 5 ? <Flame size={24} fill="currentColor" /> : <div className="w-2 h-2 bg-gray-200 rounded-full" />}
+              </div>
+              <span className="text-xs font-bold text-gray-400">{day}</span>
+            </div>
+          ))}
+        </div>
+        
+        <div className="mt-8 p-4 bg-blue-50 rounded-2xl border border-blue-100 flex items-center justify-center gap-3">
+          <Zap size={20} className="text-blue-600" fill="currentColor" />
+          <p className="text-sm font-bold text-blue-700">
+            {t('mastery.practiceToday')}
+          </p>
+        </div>
+      </section>
 
       {/* Learning Kanban (Simplified for dashboard) */}
       <section className="bg-white rounded-3xl border border-gray-200 p-8 shadow-sm">

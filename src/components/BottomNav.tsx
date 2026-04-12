@@ -1,10 +1,12 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { 
   Home, 
   Search, 
   PlusCircle, 
   BookOpen, 
-  User 
+  User,
+  Flame
 } from 'lucide-react';
 import { Page } from '../types';
 
@@ -14,14 +16,6 @@ interface NavItem {
   path: Page;
 }
 
-const mobileNavItems: NavItem[] = [
-  { icon: Home, label: 'Home', path: 'home' },
-  { icon: Search, label: 'Explore', path: 'explore' },
-  { icon: PlusCircle, label: 'Add', path: 'create' },
-  { icon: BookOpen, label: 'Vocab', path: 'vocab' },
-  { icon: User, label: 'Profile', path: 'profile' },
-];
-
 interface BottomNavProps {
   currentPage: Page;
   onNavigate: (page: Page) => void;
@@ -30,6 +24,15 @@ interface BottomNavProps {
 }
 
 export default function BottomNav({ currentPage, onNavigate, onAddVideo, className = '' }: BottomNavProps) {
+  const { t } = useTranslation();
+
+  const mobileNavItems: NavItem[] = [
+    { icon: Home, label: t('nav.home'), path: 'home' },
+    { icon: Search, label: t('nav.explore'), path: 'explore' },
+    { icon: PlusCircle, label: t('nav.create'), path: 'create' },
+    { icon: Flame, label: '12🔥', path: 'mastery' },
+    { icon: User, label: t('nav.profile'), path: 'profile' },
+  ];
   return (
     <nav className={`bg-white border-t border-gray-200 h-16 flex items-center justify-around px-4 pb-safe ${className}`}>
       {mobileNavItems.map((item) => {

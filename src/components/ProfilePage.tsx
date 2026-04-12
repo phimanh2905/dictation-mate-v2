@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   User, 
@@ -16,10 +17,12 @@ import {
   ArrowRight,
   Flame,
   X,
-  Plus
+  Plus,
+  Zap
 } from 'lucide-react';
 
 export default function ProfilePage({ onNavigate }: { onNavigate: (page: any) => void }) {
+  const { t } = useTranslation();
   const [targetLevel, setTargetLevel] = useState('C1 Advanced');
   const [dailyGoal, setDailyGoal] = useState('30 minutes / day');
   const [interests, setInterests] = useState(['Business', 'Tech', 'Daily Life', 'Science']);
@@ -72,7 +75,11 @@ export default function ProfilePage({ onNavigate }: { onNavigate: (page: any) =>
         </div>
 
         <div className="flex flex-col gap-3 w-full md:w-auto">
-          <button className="px-6 py-3 bg-blue-600 text-white rounded-2xl font-bold shadow-lg hover:bg-blue-700 transition-all text-center">
+          <button 
+            onClick={() => onNavigate('pricing')}
+            className="px-6 py-3 bg-blue-600 text-white rounded-2xl font-bold shadow-lg hover:bg-blue-700 transition-all text-center flex items-center justify-center gap-2"
+          >
+            <Zap size={18} fill="currentColor" />
             Upgrade to Premium
           </button>
           <button className="px-6 py-3 bg-white border border-gray-200 text-gray-600 rounded-2xl font-bold hover:bg-gray-50 transition-all text-center">
@@ -84,46 +91,59 @@ export default function ProfilePage({ onNavigate }: { onNavigate: (page: any) =>
         <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
       </section>
 
-      {/* Dashboard Preview Card - Shows quick stats + link */}
+      {/* Plan & Progress Card */}
       <section className="bg-gradient-to-r from-blue-600 to-violet-600 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
         {/* Background decoration */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
         
         <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20">
-              <Chart size={28} className="text-white" />
+          <div className="flex items-center gap-6">
+            <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20 shadow-inner">
+              <Zap size={32} className="text-amber-400" fill="currentColor" />
             </div>
             <div>
-              <h3 className="font-bold text-xl">Your Progress</h3>
-              <p className="text-blue-100 text-sm mt-1">
+              <div className="flex items-center gap-2">
+                <p className="text-xs font-bold text-blue-200 uppercase tracking-widest">{t('pricing.current')}</p>
+                <span className="px-2 py-0.5 bg-white/20 rounded-full text-[10px] font-black uppercase tracking-tighter">Free</span>
+              </div>
+              <h3 className="font-black text-3xl mt-1">Dictation Mate Free</h3>
+              <p className="text-blue-100 text-sm mt-1 opacity-80">
                 47 hours studied • 12.4k XP • 12 day streak
               </p>
             </div>
           </div>
           
-          <button 
-            onClick={() => onNavigate('statistics')}
-            className="px-6 py-3 bg-white/20 backdrop-blur-md rounded-2xl font-bold text-sm border border-white/20 hover:bg-white/30 transition-all flex items-center gap-2"
-          >
-            View Full Statistics
-            <ArrowRight size={18} />
-          </button>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button 
+              onClick={() => onNavigate('pricing')}
+              className="px-6 py-3 bg-amber-400 text-blue-900 rounded-2xl font-bold text-sm hover:bg-amber-300 transition-all flex items-center justify-center gap-2 shadow-lg shadow-amber-400/20"
+            >
+              <Zap size={18} fill="currentColor" />
+              {t('pricing.upgrade')}
+            </button>
+            <button 
+              onClick={() => onNavigate('statistics')}
+              className="px-6 py-3 bg-white/20 backdrop-blur-md rounded-2xl font-bold text-sm border border-white/20 hover:bg-white/30 transition-all flex items-center justify-center gap-2"
+            >
+              {t('home.viewProgress')}
+              <ArrowRight size={18} />
+            </button>
+          </div>
         </div>
         
         {/* Mini stat pills */}
         <div className="relative z-10 flex flex-wrap gap-3 mt-6 pt-6 border-t border-white/20">
-          <span className="px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-xs font-bold border border-white/10">
-            🔥 12 Day Streak
+          <span className="px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-xs font-bold border border-white/10 flex items-center gap-2">
+            <Flame size={14} className="text-orange-400" fill="currentColor" />
+            12 Day Streak
           </span>
-          <span className="px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-xs font-bold border border-white/10">
-            ⭐ 12.4k XP
+          <span className="px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-xs font-bold border border-white/10 flex items-center gap-2">
+            <Award size={14} className="text-yellow-400" />
+            12.4k XP
           </span>
-          <span className="px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-xs font-bold border border-white/10">
-            🎯 B2 Level
-          </span>
-          <span className="px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-xs font-bold border border-white/10">
-            📚 247 Words
+          <span className="px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-xs font-bold border border-white/10 flex items-center gap-2">
+            <Target size={14} className="text-blue-400" />
+            B2 Level
           </span>
         </div>
       </section>

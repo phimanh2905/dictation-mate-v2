@@ -5,6 +5,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import './i18n'; // Initialize i18n
 import { Page } from './types';
 import Sidebar from './components/Sidebar';
 import BottomNav from './components/BottomNav';
@@ -20,6 +21,8 @@ import MyVideosPage from './components/MyVideosPage';
 import AddVideoModal from './components/create/AddVideoModal';
 import LeaderboardPage from './components/LeaderboardPage';
 import StatisticsPage from './components/StatisticsPage';
+import PricingPage from './components/PricingPage';
+import Header from './components/Header';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<Page>('home');
@@ -46,6 +49,7 @@ export default function App() {
       case 'library': return <MyVideosPage onNavigate={setCurrentPage} onAddVideo={handleAddVideo} />;
       case 'leaderboard': return <LeaderboardPage onNavigate={setCurrentPage} />;
       case 'statistics': return <StatisticsPage onNavigate={setCurrentPage} />;
+      case 'pricing': return <PricingPage onNavigate={setCurrentPage} />;
       case 'settings': return <PlaceholderPage title="Settings" icon="⚙️" />;
       default: return <HomePage onNavigate={setCurrentPage} onAddVideo={handleAddVideo} />;
     }
@@ -63,6 +67,7 @@ export default function App() {
       
       {/* Main Content */}
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <Header onNavigate={setCurrentPage} />
         <div className="flex-1 overflow-y-auto no-scrollbar pb-20 lg:pb-8">
           <div className="max-w-7xl mx-auto p-4 md:p-6 lg:p-8">
             <AnimatePresence mode="wait">
