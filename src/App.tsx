@@ -23,6 +23,8 @@ import LeaderboardPage from './components/LeaderboardPage';
 import StatisticsPage from './components/StatisticsPage';
 import PricingPage from './components/PricingPage';
 import Header from './components/Header';
+import OnboardingWizard from './components/onboarding/OnboardingWizard';
+import LoginPage from './components/auth/LoginPage';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<Page>('home');
@@ -50,6 +52,8 @@ export default function App() {
       case 'leaderboard': return <LeaderboardPage onNavigate={setCurrentPage} />;
       case 'statistics': return <StatisticsPage onNavigate={setCurrentPage} />;
       case 'pricing': return <PricingPage onNavigate={setCurrentPage} />;
+      case 'onboarding': return <OnboardingWizard onComplete={() => setCurrentPage('home')} />;
+      case 'login': return <LoginPage onLogin={() => setCurrentPage('onboarding')} />;
       case 'settings': return <PlaceholderPage title="Settings" icon="⚙️" />;
       default: return <HomePage onNavigate={setCurrentPage} onAddVideo={handleAddVideo} />;
     }

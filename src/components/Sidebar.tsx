@@ -12,7 +12,8 @@ import {
   User,
   Library,
   Flame,
-  Zap
+  Zap,
+  Rocket
 } from 'lucide-react';
 import { Page } from '../types';
 
@@ -37,6 +38,8 @@ export default function Sidebar({ currentPage, onNavigate, onAddVideo, className
     { icon: Home, label: t('nav.home'), path: 'home' },
     { icon: Search, label: t('nav.explore'), path: 'explore' },
     { icon: Library, label: t('nav.library'), path: 'library' },
+    { icon: Rocket, label: 'Onboarding', path: 'onboarding', badge: 'DEMO' },
+    { icon: User, label: 'Login', path: 'login', badge: 'DEMO' },
   ];
 
   const createNavItems: NavItem[] = [
