@@ -10,6 +10,7 @@ interface PracticeHeaderProps {
   onModeChange: (mode: PracticeMode) => void;
   isTestMode: boolean;
   onToggleTestMode: () => void;
+  onOpenSettings: () => void;
 }
 
 export default function PracticeHeader({ 
@@ -18,7 +19,8 @@ export default function PracticeHeader({
   mode, 
   onModeChange,
   isTestMode,
-  onToggleTestMode
+  onToggleTestMode,
+  onOpenSettings
 }: PracticeHeaderProps) {
   return (
     <header className="h-16 bg-white/80 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-4 shrink-0 z-10">
@@ -72,7 +74,10 @@ export default function PracticeHeader({
         <button className="p-2 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-600 transition-colors">
           <Bookmark size={18} />
         </button>
-        <button className="p-2 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-600 transition-colors">
+        <button 
+          onClick={onOpenSettings}
+          className="p-2 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-600 transition-colors"
+        >
           <Settings size={18} />
         </button>
         <button className="p-2 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-600 transition-colors">

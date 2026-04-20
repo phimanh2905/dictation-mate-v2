@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Volume2, Lightbulb, CheckCircle2, XCircle, RefreshCw, 
   ChevronRight, ChevronLeft, Repeat, Sparkles, Flame,
-  EyeOff, Monitor, Play
+  EyeOff, Monitor, Play, Video as VideoIcon, Keyboard
 } from 'lucide-react';
+import { useRegisterAction } from '../../contexts/PracticeActionsContext';
+import { usePracticeSettings } from '../../contexts/PracticeSettingsContext';
 
 type DictationStatus = 'idle' | 'correct' | 'wrong';
 
@@ -12,6 +14,8 @@ export default function DictationPanel() {
   const [input, setInput] = useState('');
   const [status, setStatus] = useState<DictationStatus>('idle');
   const [activeQuestion, setActiveQuestion] = useState(1);
+  const registerAction = useRegisterAction();
+  const { hideVideo, setHideVideo, setIsSettingsOpen } = usePracticeSettings();
   
   const totalQuestions = 901;
   const questions = Array.from({ length: 10 }, (_, i) => i + 1); // Mock first 10 questions
@@ -23,6 +27,10 @@ export default function DictationPanel() {
       setStatus('wrong');
     }
   };
+
+  useEffect(() => {
+    registerAction('checkAnswer', checkAnswer);
+  }, [input, registerAction]);
 
   const handleRetry = () => {
     setStatus('idle');
@@ -55,12 +63,22 @@ export default function DictationPanel() {
           </div>
           
           <div className="flex gap-2">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-medium text-gray-700 hover:bg-gray-50 transition-colors shadow-sm">
-              <EyeOff size={14} />
-              Ẩn video
+            <button 
+              onClick={() => setHideVideo(!hideVideo)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 border rounded-lg text-xs font-medium transition-colors shadow-sm ${
+                hideVideo 
+                  ? 'bg-blue-600 border-blue-600 text-white hover:bg-blue-700' 
+                  : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              {hideVideo ? <VideoIcon size={14} /> : <EyeOff size={14} />}
+              {hideVideo ? 'Hiện video' : 'Ẩn video'}
             </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-medium text-gray-700 hover:bg-gray-50 transition-colors shadow-sm">
-              <Monitor size={14} />
+            <button 
+              onClick={() => setIsSettingsOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-medium text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
+            >
+              <Keyboard size={14} />
               Phím tắt
             </button>
           </div>

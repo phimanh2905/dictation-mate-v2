@@ -1,16 +1,23 @@
-import React, { useState } from 'react';
-import { Play, Pause, SkipBack, SkipForward, Volume2 } from 'lucide-react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { Play, Pause, SkipBack, SkipForward, Volume2, Video as VideoIcon } from 'lucide-react';
 import { Video } from '../../types';
+import { useRegisterAction } from '../../contexts/PracticeActionsContext';
+import { usePracticeSettings } from '../../contexts/PracticeSettingsContext';
 
 interface VideoPaneProps {
   video: Video;
+  posterOnly?: boolean;
 }
 
-export default function VideoPane({ video }: VideoPaneProps) {
+export default function VideoPane({ video, posterOnly = false }: VideoPaneProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(100); // Mock duration
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
+  const registerAction = useRegisterAction();
+  const { replayCount } = usePracticeSettings();
+  
+  const replayIterationRef = useRef(0);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -19,6 +26,57 @@ export default function VideoPane({ video }: VideoPaneProps) {
   };
 
   const togglePlay = () => setIsPlaying(!isPlaying);
+
+  const replayChunk = useCallback(() => {
+    // Reset iteration counter
+    replayIterationRef.current = 1;
+    // Mock replay: set time back a bit and play
+    setCurrentTime(Math.max(0, currentTime - 5));
+    setIsPlaying(true);
+    
+    console.log(`Replaying (Iteration 1/${replayCount})`);
+  }, [currentTime, replayCount]);
+
+  useEffect(() => {
+    registerAction('togglePlay', togglePlay);
+    registerAction('replayChunk', replayChunk);
+  }, [isPlaying, currentTime, registerAction, replayChunk]);
+
+  // Mock auto-replay logic for demonstration
+  useEffect(() => {
+    if (isPlaying && replayIterationRef.current > 0 && replayIterationRef.current < replayCount) {
+       const timer = setTimeout(() => {
+         console.log(`Auto-replaying (${replayIterationRef.current + 1}/${replayCount})`);
+         setCurrentTime(prev => Math.max(0, prev - 2));
+         replayIterationRef.current += 1;
+       }, 2000);
+       return () => clearTimeout(timer);
+    } else if (replayIterationRef.current >= replayCount) {
+       replayIterationRef.current = 0;
+       setIsPlaying(false);
+    }
+  }, [isPlaying, replayCount]);
+
+  if (posterOnly) {
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center bg-slate-900 border-r border-slate-800">
+        <div className="relative group">
+          <img 
+            src={video.thumbnail} 
+            alt={video.title}
+            className="w-48 h-27 object-cover rounded-xl opacity-40 blur-[2px] grayscale"
+            referrerPolicy="no-referrer"
+          />
+          <div className="absolute inset-0 flex flex-col items-center justify-center group-hover:scale-105 transition-transform">
+             <div className="w-12 h-12 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20">
+               <VideoIcon size={20} className="text-white" />
+             </div>
+             <p className="text-[10px] font-bold text-white/60 mt-2 uppercase tracking-tighter">Video đang ẩn</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex-1 flex flex-col bg-slate-950 h-full relative overflow-hidden">

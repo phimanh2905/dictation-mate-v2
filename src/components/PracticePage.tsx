@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Panel, Group as PanelGroup, Separator as PanelResizeHandle } from "react-resizable-panels";
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronUp, ChevronDown, Timer as TimerIcon, Pause, Play } from 'lucide-react';
+import { ChevronUp, ChevronDown, Timer as TimerIcon, Pause, Play, Monitor, Keyboard } from 'lucide-react';
 import { Page, PracticeMode } from '../types';
 import { MOCK_VIDEOS } from '../constants';
 import PracticeHeader from './practice/PracticeHeader';
 import VideoPane from './practice/VideoPane';
 import PracticePane from './practice/PracticePane';
+import PracticeSettingsModal from './practice/PracticeSettingsModal';
 import { usePracticeLayout } from '../hooks/usePracticeLayout';
+import { usePracticeSettings } from '../contexts/PracticeSettingsContext';
+import { usePracticeActions } from '../contexts/PracticeActionsContext';
 
 interface PracticePageProps {
   onNavigate: (page: Page) => void;
@@ -17,7 +20,58 @@ export default function PracticePage({ onNavigate }: PracticePageProps) {
   const [mode, setMode] = useState<PracticeMode>('dictation');
   const { userRatios, saveRatio } = usePracticeLayout();
   const [isVideoExpanded, setIsVideoExpanded] = useState(true);
+  const { hideVideo, shortcuts, isSettingsOpen, setIsSettingsOpen } = usePracticeSettings();
+  const { togglePlay, replayChunk, checkAnswer } = usePracticeActions();
+  const [shortcutFeedback, setShortcutFeedback] = useState<string | null>(null);
   
+  // Keyboard Shortcuts Listener
+  useEffect(() => {
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      // Don't trigger if settings modal is open or if typing in an input other than the main dictation area
+      if (isSettingsOpen) return;
+      
+      const activeEl = document.activeElement;
+      // If typing in textarea, allow Ctrl+Enter but maybe not Ctrl+Space?
+      // Actually usually you want global shortcuts to work unless in a specific input
+      
+      const isTextArea = activeEl instanceof HTMLTextAreaElement;
+
+      // Map current keys to a string representation
+      let keyStr = '';
+      if (e.ctrlKey) keyStr += 'Control+';
+      if (e.metaKey) keyStr += 'Meta+';
+      if (e.shiftKey) keyStr += 'Shift+';
+      if (e.altKey) keyStr += 'Alt+';
+      
+      if (e.key !== 'Control' && e.key !== 'Meta' && e.key !== 'Shift' && e.key !== 'Alt') {
+        keyStr += e.key;
+      }
+
+      const triggerFeedback = (msg: string) => {
+        setShortcutFeedback(msg);
+        setTimeout(() => setShortcutFeedback(null), 1000);
+      };
+
+      // Check against defined shortcuts
+      if (keyStr === shortcuts.togglePlay) {
+        e.preventDefault();
+        togglePlay();
+        triggerFeedback('Play/Pause');
+      } else if (keyStr === shortcuts.replayChunk) {
+        e.preventDefault();
+        replayChunk();
+        triggerFeedback('Replaying...');
+      } else if (keyStr === shortcuts.checkAnswer) {
+        e.preventDefault();
+        checkAnswer();
+        triggerFeedback('Checking Answer');
+      }
+    };
+
+    window.addEventListener('keydown', handleGlobalKeyDown);
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+  }, [shortcuts, togglePlay, replayChunk, checkAnswer, isSettingsOpen]);
+
   // Test Mode State
   const [isTestMode, setIsTestMode] = useState(false);
   const [timer, setTimer] = useState(0);
@@ -137,6 +191,7 @@ export default function PracticePage({ onNavigate }: PracticePageProps) {
           onModeChange={setMode}
           isTestMode={isTestMode}
           onToggleTestMode={toggleTestMode}
+          onOpenSettings={() => setIsSettingsOpen(true)}
         />
         
         <div className="flex-1 flex flex-col overflow-hidden relative">
@@ -145,29 +200,33 @@ export default function PracticePage({ onNavigate }: PracticePageProps) {
           </AnimatePresence>
 
           {/* Collapsible Video */}
-          <AnimatePresence initial={false}>
-            {isVideoExpanded && (
-              <motion.div
-                initial={{ height: 0 }}
-                animate={{ height: 'auto' }}
-                exit={{ height: 0 }}
-                className="bg-black shrink-0 overflow-hidden"
-              >
-                <div className="aspect-video">
-                  <VideoPane video={video} />
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {!hideVideo && (
+            <AnimatePresence initial={false}>
+              {isVideoExpanded && (
+                <motion.div
+                  initial={{ height: 0 }}
+                  animate={{ height: 'auto' }}
+                  exit={{ height: 0 }}
+                  className="bg-black shrink-0 overflow-hidden"
+                >
+                  <div className="aspect-video">
+                    <VideoPane video={video} />
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          )}
 
           {/* Toggle Video Button */}
-          <button
-            onClick={() => setIsVideoExpanded(!isVideoExpanded)}
-            className="py-2 bg-slate-800 text-slate-400 text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 hover:text-white transition-colors shrink-0"
-          >
-            {isVideoExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-            {isVideoExpanded ? 'Thu gọn video' : 'Mở rộng video'}
-          </button>
+          {!hideVideo && (
+            <button
+              onClick={() => setIsVideoExpanded(!isVideoExpanded)}
+              className="py-2 bg-slate-800 text-slate-400 text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 hover:text-white transition-colors shrink-0"
+            >
+              {isVideoExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+              {isVideoExpanded ? 'Thu gọn video' : 'Mở rộng video'}
+            </button>
+          )}
 
           {/* Practice Area */}
           <div className="flex-1 overflow-hidden pb-16">
@@ -189,6 +248,7 @@ export default function PracticePage({ onNavigate }: PracticePageProps) {
         onModeChange={setMode}
         isTestMode={isTestMode}
         onToggleTestMode={toggleTestMode}
+        onOpenSettings={() => setIsSettingsOpen(true)}
       />
       
       <div className="flex-1 flex flex-col overflow-hidden">
@@ -201,14 +261,14 @@ export default function PracticePage({ onNavigate }: PracticePageProps) {
           className="flex-1 overflow-hidden"
           onLayout={handleResize}
         >
-          {/* LEFT PANE: Video Only */}
+          {/* LEFT PANE: Video Pane or Thumbnail */}
           <Panel 
-            defaultSize={currentRatio}
-            minSize={20}
+            defaultSize={hideVideo ? 15 : currentRatio}
+            minSize={hideVideo ? 10 : 20}
             maxSize={80}
             className="flex flex-col bg-black relative"
           >
-            <VideoPane video={video} />
+            <VideoPane video={video} posterOnly={hideVideo} />
           </Panel>
 
           {/* DRAGGABLE SEPARATOR */}
@@ -222,7 +282,7 @@ export default function PracticePage({ onNavigate }: PracticePageProps) {
 
           {/* RIGHT PANE: Practice Area */}
           <Panel 
-            defaultSize={100 - currentRatio}
+            defaultSize={hideVideo ? 85 : 100 - currentRatio}
             minSize={20}
             className="bg-slate-50 flex flex-col overflow-hidden"
           >
@@ -233,6 +293,25 @@ export default function PracticePage({ onNavigate }: PracticePageProps) {
           </Panel>
         </PanelGroup>
       </div>
+
+      <PracticeSettingsModal 
+        isOpen={isSettingsOpen} 
+        onClose={() => setIsSettingsOpen(false)} 
+      />
+
+      <AnimatePresence>
+        {shortcutFeedback && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[300] px-6 py-3 bg-slate-900/90 backdrop-blur-md text-white rounded-2xl font-bold border border-white/10 shadow-2xl flex items-center gap-3"
+          >
+            <Keyboard size={18} className="text-indigo-400" />
+            {shortcutFeedback}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

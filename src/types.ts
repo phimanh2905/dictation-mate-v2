@@ -75,3 +75,17 @@ export interface TranscriptLine {
   text: string;
   chunkIndex: number;
 }
+
+export type ReplayCount = 1 | 3 | 5;
+
+export interface KeyboardShortcuts {
+  togglePlay: string;
+  replayChunk: string;
+  checkAnswer: string;
+}
+
+export interface PracticeSettings {
+  replayCount: ReplayCount;
+  hideVideo: boolean;
+  shortcuts: KeyboardShortcuts;
+}
