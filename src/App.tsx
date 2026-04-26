@@ -66,7 +66,7 @@ export default function App() {
         currentPage={currentPage} 
         onNavigate={setCurrentPage} 
         onAddVideo={handleAddVideo}
-        className="hidden lg:flex w-60 flex-col" 
+        className="hidden lg:flex flex-col" 
       />
       
       {/* Main Content */}
