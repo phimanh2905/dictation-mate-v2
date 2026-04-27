@@ -47,6 +47,30 @@ const resources = {
       month: '/month',
       compare: 'Compare Features',
       faq: 'Frequently Asked Questions'
+    },
+    error: {
+      404: {
+        title: 'Page Not Found',
+        subtitle: 'The page you\'re looking for doesn\'t exist or may have moved. No worries — your learning streak is safe!',
+        ctaHome: 'Back to Home',
+        ctaExplore: 'Explore Lessons',
+        ctaRetry: 'Try Again'
+      },
+      403: {
+        title: 'Access Denied',
+        subtitle: 'This content is for Plus/Pro members. Upgrade to unlock unlimited video creation, advanced analytics, and personalized AI coaching.',
+        ctaPricing: 'View Pricing',
+        ctaLogin: 'Log In',
+        ctaHome: 'Go Home'
+      },
+      502: {
+        title: 'Service Temporarily Unavailable',
+        subtitle: 'Our servers are taking a quick breather. Your progress is saved — we\'ll have you back to learning in no time!',
+        ctaRetry: 'Retry',
+        ctaSupport: 'Contact Support',
+        ctaHome: 'Go Home',
+        retrying: 'Retrying in {{seconds}}s...'
+      }
     }
   }},
   vi: { translation: {
@@ -94,6 +118,30 @@ const resources = {
       month: '/tháng',
       compare: 'So sánh tính năng',
       faq: 'Câu hỏi thường gặp'
+    },
+    error: {
+      404: {
+        title: 'Không tìm thấy trang',
+        subtitle: 'Trang bạn đang tìm kiếm không tồn tại hoặc đã được di chuyển. Đừng lo — chuỗi ngày học tập của bạn vẫn an toàn!',
+        ctaHome: 'Quay lại Trang chủ',
+        ctaExplore: 'Khám phá bài học',
+        ctaRetry: 'Thử lại'
+      },
+      403: {
+        title: 'Truy cập bị từ chối',
+        subtitle: 'Nội dung này dành cho thành viên Plus/Pro. Nâng cấp để mở khóa tạo video không giới hạn và huấn luyện viên AI cá nhân.',
+        ctaPricing: 'Xem bảng giá',
+        ctaLogin: 'Đăng nhập',
+        ctaHome: 'Về trang chủ'
+      },
+      502: {
+        title: 'Dịch vụ tạm thời không khả dụng',
+        subtitle: 'Máy chủ của chúng tôi đang tạm nghỉ một chút. Tiến trình của bạn đã được lưu — chúng tôi sẽ sớm đưa bạn quay lại việc học!',
+        ctaRetry: 'Thử lại',
+        ctaSupport: 'Liên hệ hỗ trợ',
+        ctaHome: 'Về trang chủ',
+        retrying: 'Thử lại sau {{seconds}} giây...'
+      }
     }
   }}
 };

@@ -25,6 +25,9 @@ import PricingPage from './components/PricingPage';
 import Header from './components/Header';
 import OnboardingWizard from './components/onboarding/OnboardingWizard';
 import LoginPage from './components/auth/LoginPage';
+import NotFoundPage from './components/errors/NotFoundPage';
+import ForbiddenPage from './components/errors/ForbiddenPage';
+import ServiceUnavailablePage from './components/errors/ServiceUnavailablePage';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<Page>('home');
@@ -55,6 +58,9 @@ export default function App() {
       case 'onboarding': return <OnboardingWizard onComplete={() => setCurrentPage('home')} />;
       case 'login': return <LoginPage onLogin={() => setCurrentPage('onboarding')} />;
       case 'settings': return <PlaceholderPage title="Settings" icon="⚙️" />;
+      case 'error-404': return <NotFoundPage onNavigate={setCurrentPage} />;
+      case 'error-403': return <ForbiddenPage onNavigate={setCurrentPage} />;
+      case 'error-502': return <ServiceUnavailablePage onNavigate={setCurrentPage} />;
       default: return <HomePage onNavigate={setCurrentPage} onAddVideo={handleAddVideo} />;
     }
   };

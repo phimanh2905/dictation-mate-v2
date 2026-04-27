@@ -15,7 +15,9 @@ import {
   Zap,
   Rocket,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  LifeBuoy,
+  AlertTriangle
 } from 'lucide-react';
 import { Page } from '../types';
 
@@ -66,6 +68,12 @@ export default function Sidebar({ currentPage, onNavigate, onAddVideo, className
     { icon: BarChart3, label: t('nav.statistics'), path: 'statistics' },
     { icon: Settings, label: t('nav.settings'), path: 'settings' },
     { icon: Zap, label: t('nav.upgrade'), path: 'pricing', badge: 'PRO' },
+  ];
+
+  const supportNavItems: NavItem[] = [
+    { icon: LifeBuoy, label: 'Support', path: 'error-502' },
+    { icon: AlertTriangle, label: 'Demo 404', path: 'error-404' },
+    { icon: AlertTriangle, label: 'Demo 403', path: 'error-403' },
   ];
 
   const renderNavItem = (item: NavItem) => {
@@ -195,6 +203,13 @@ export default function Sidebar({ currentPage, onNavigate, onAddVideo, className
             <p className={`px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 transition-all duration-300 ${isExpanded ? 'opacity-100' : 'opacity-0 invisible h-0 mb-0 px-0'}`}>Personal</p>
             <div className="space-y-1">
               {personalNavItems.map(renderNavItem)}
+            </div>
+          </div>
+
+          <div>
+            <p className={`px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 transition-all duration-300 ${isExpanded ? 'opacity-100' : 'opacity-0 invisible h-0 mb-0 px-0'}`}>Support & System</p>
+            <div className="space-y-1">
+              {supportNavItems.map(renderNavItem)}
             </div>
           </div>
         </div>
