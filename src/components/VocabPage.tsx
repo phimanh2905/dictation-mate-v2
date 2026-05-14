@@ -146,19 +146,46 @@ export default function VocabPage() {
 
   // New state for layout updates
   const [activeFilter, setActiveFilter] = useState<FilterCategory>('All');
-  const [selectedCollection, setSelectedCollection] = useState<string | null>(null);
+  // View state
+  const [activeCollection, setActiveCollection] = useState<FeaturedCollection | any | null>(null);
+  const [activeTopic, setActiveTopic] = useState<{ id: string, name: string } | null>(null);
   const [isAddMenuOpen, setIsAddMenuOpen] = useState(false);
   const [isAddWordModalOpen, setIsAddWordModalOpen] = useState(false);
   const [isCreateCollectionModalOpen, setIsCreateCollectionModalOpen] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState(0);
   const [selectedColor, setSelectedColor] = useState('blue');
 
+  const MOCK_TOPICS: Record<string, { id: string, name: string, status: string, count: number }[]> = {
+    'toeic-500-starter': [
+      { id: 'toeic-t1', name: 'Office Communications', status: 'In Progress', count: 45 },
+      { id: 'toeic-t2', name: 'Business Travel', status: 'New', count: 30 },
+      { id: 'toeic-t3', name: 'Financial Documents', status: 'Completed', count: 50 },
+      { id: 'toeic-t4', name: 'Marketing & Sales', status: 'New', count: 35 },
+    ],
+    'ielts-academic-7': [
+      { id: 'ielts-t1', name: 'Abstract Concepts', status: 'New', count: 40 },
+      { id: 'ielts-t2', name: 'Academic Research', status: 'In Progress', count: 60 },
+      { id: 'ielts-t3', name: 'Natural Environment', status: 'Completed', count: 45 },
+    ],
+    'business-essentials': [
+      { id: 'biz-t1', name: 'Meetings & Presentations', status: 'Completed', count: 40 },
+      { id: 'biz-t2', name: 'Email Etiquette', status: 'In Progress', count: 30 },
+      { id: 'biz-t3', name: 'Negotiation Skills', status: 'New', count: 25 },
+    ],
+    'a1-beginner-core': [
+      { id: 'a1-t1', name: 'Greetings & Basics', status: 'Completed', count: 25 },
+      { id: 'a1-t2', name: 'Numbers & Time', status: 'Completed', count: 30 },
+      { id: 'a1-t3', name: 'Family & Friends', status: 'In Progress', count: 20 },
+      { id: 'a1-t4', name: 'Daily Objects', status: 'New', count: 25 },
+    ]
+  };
+
   const currentWord = MOCK_WORDS[currentWordIndex];
 
   const collections = [
-    { name: 'Business Terms', count: 24, progress: 60, color: 'text-blue-600', bg: 'bg-blue-50' },
-    { name: 'Movies & TV', count: 18, progress: 40, color: 'text-purple-600', bg: 'bg-purple-50' },
-    { name: 'Science Words', count: 12, progress: 80, color: 'text-amber-600', bg: 'bg-amber-50' },
+    { id: 'biz-terms', name: 'Business Terms', count: 24, progress: 60, color: 'text-blue-600', bg: 'bg-blue-50', icon: '💼' },
+    { id: 'movies-tv', name: 'Movies & TV', count: 18, progress: 40, color: 'text-purple-600', bg: 'bg-purple-50', icon: '🎬' },
+    { id: 'sci-words', name: 'Science Words', count: 12, progress: 80, color: 'text-amber-600', bg: 'bg-amber-50', icon: '🔬' },
   ];
 
   const handleNextWord = () => {
@@ -180,6 +207,480 @@ export default function VocabPage() {
     setWriteAttempts(0);
     setIsRevealed(false);
   };
+
+  const handleTopicClick = (topic: { id: string, name: string }) => {
+    setActiveTopic(topic);
+    // Scroll to top or practice area
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleBackToCollections = () => {
+    setActiveCollection(null);
+    setActiveTopic(null);
+  };
+
+  const handleBackToTopics = () => {
+    setActiveTopic(null);
+  };
+
+  if (activeTopic) {
+    return (
+      <div className="space-y-6 pb-12">
+        <button 
+          onClick={handleBackToTopics}
+          className="flex items-center gap-2 text-gray-500 hover:text-gray-900 font-bold transition-colors mb-4"
+        >
+          <ChevronLeft size={20} />
+          Back to {activeCollection?.name} Topics
+        </button>
+
+        <section className="bg-gradient-to-br from-gray-900 to-slate-800 rounded-3xl p-8 md:p-12 shadow-2xl relative overflow-hidden">
+          {/* Decorative background blobs */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-purple-500/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+
+          <div className="relative z-10 space-y-8">
+            {/* Selected Topic Badge */}
+            <div className="flex justify-center">
+              <div className="inline-flex flex-col items-center gap-2">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full border border-white/10">
+                  <BookOpen size={16} className="text-blue-400" />
+                  <span className="text-white text-sm font-bold">{activeTopic.name}</span>
+                </div>
+                <p className="text-white/40 text-[10px] font-bold uppercase tracking-widest">{activeCollection?.name}</p>
+              </div>
+            </div>
+
+            {/* SESSION STATS BAR */}
+            <div className="hidden md:flex items-center justify-between">
+              <div className="flex items-center gap-4 flex-1 max-w-xs">
+                <span className="text-sm font-bold text-white">{currentWordIndex + 1}/{MOCK_WORDS.length} words</span>
+                <div className="flex-1 h-2 bg-white/20 rounded-full">
+                  <div 
+                    className="h-full bg-blue-500 rounded-full transition-all duration-500" 
+                    style={{ width: `${((currentWordIndex + 1) / MOCK_WORDS.length) * 100}%` }}
+                  ></div>
+                </div>
+              </div>
+              <div className="flex items-center gap-6">
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-white">85%</p>
+                  <p className="text-xs text-white/60">Accuracy</p>
+                </div>
+                <div className="w-px h-8 bg-white/20"></div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-orange-400">🔥 5</p>
+                  <p className="text-xs text-white/60">Streak</p>
+                </div>
+                <div className="w-px h-8 bg-white/20"></div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-blue-400">120</p>
+                  <p className="text-xs text-white/60">XP</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="md:hidden space-y-3">
+              <div className="flex justify-between text-sm">
+                <span className="text-white font-bold">Session Progress</span>
+                <span className="text-white/80">{currentWordIndex + 1}/{MOCK_WORDS.length}</span>
+              </div>
+              <div className="h-2 bg-white/20 rounded-full">
+                <div 
+                  className="h-full bg-blue-500 rounded-full transition-all duration-500" 
+                  style={{ width: `${((currentWordIndex + 1) / MOCK_WORDS.length) * 100}%` }}
+                ></div>
+              </div>
+              <div className="flex justify-around">
+                <div className="text-center">
+                  <p className="text-lg font-bold text-white">85%</p>
+                  <p className="text-xs text-white/60">Accuracy</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-lg font-bold text-orange-400">🔥 5</p>
+                  <p className="text-xs text-white/60">Streak</p>
+                </div>
+              </div>
+            </div>
+
+            {/* TABS NAVIGATION */}
+            <div className="flex justify-center">
+              <div className="flex p-1 bg-white/10 rounded-xl max-w-md w-full">
+                {practiceModes.map((mode) => (
+                  <button
+                    key={mode}
+                    onClick={() => setActiveMode(mode)}
+                    className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-bold transition-all ${
+                      activeMode === mode
+                        ? 'bg-white text-gray-900 shadow-lg'
+                        : 'text-white/60 hover:text-white'
+                    }`}
+                  >
+                    {mode}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* TAB CONTENT AREA */}
+            <div className="relative min-h-[400px]">
+              <AnimatePresence mode="wait">
+                {activeMode === 'Flashcard' && (
+                  <motion.div
+                    key="flashcard"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    className="flex flex-col items-center space-y-8"
+                  >
+                    <div 
+                      className="w-full max-w-md h-80 relative cursor-pointer group" 
+                      style={{ perspective: '1000px' }}
+                      onClick={() => setIsFlipped(!isFlipped)}
+                    >
+                      <motion.div
+                        className="w-full h-full relative preserve-3d"
+                        animate={{ rotateY: isFlipped ? 180 : 0 }}
+                        transition={{ duration: 0.6, type: "spring", stiffness: 260, damping: 20 }}
+                      >
+                        {/* Front */}
+                        <div className="absolute inset-0 backface-hidden bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 flex flex-col items-center justify-center text-center space-y-4 group-hover:bg-white/10 transition-colors">
+                          <div className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-[10px] font-bold uppercase tracking-widest">
+                            {currentWord.level} • {currentWord.partOfSpeech}
+                          </div>
+                          <h3 className="text-5xl font-bold text-white tracking-tight">{currentWord.word}</h3>
+                          <p className="text-lg text-white/40 font-mono">{currentWord.phonetic}</p>
+                          <div className="pt-4 flex items-center gap-2 text-white/20 text-xs font-medium">
+                            <RotateCcw size={14} />
+                            Tap to flip
+                          </div>
+                        </div>
+
+                        {/* Back */}
+                        <div className="absolute inset-0 backface-hidden bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8 flex flex-col items-center justify-center text-center space-y-6 rotate-y-180">
+                          <div className="space-y-2">
+                            <h4 className="text-2xl font-bold text-white">{currentWord.translation}</h4>
+                            <p className="text-white/60 leading-relaxed">{currentWord.definition}</p>
+                          </div>
+                          <div className="p-4 bg-white/5 rounded-xl border border-white/5 w-full">
+                            <p className="text-sm text-white/80 italic leading-relaxed">
+                              "{currentWord.example}"
+                            </p>
+                          </div>
+                        </div>
+                      </motion.div>
+                    </div>
+
+                    <div className="flex items-center justify-between w-full max-w-lg">
+                      <button 
+                        onClick={handlePrevWord}
+                        className="flex items-center gap-2 px-4 py-2 text-white/60 hover:text-white font-bold transition-colors"
+                      >
+                        <ChevronLeft size={20} /> Prev
+                      </button>
+                      <span className="text-white/40 font-mono text-sm">{currentWordIndex + 1} / {MOCK_WORDS.length}</span>
+                      <button 
+                        onClick={handleNextWord}
+                        className="flex items-center gap-2 px-4 py-2 text-white/60 hover:text-white font-bold transition-colors"
+                      >
+                        Next <ChevronRight size={20} />
+                      </button>
+                    </div>
+
+                    <div className="flex items-center gap-4">
+                      <button className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-all border border-white/10">
+                        <Volume2 size={24} />
+                      </button>
+                      <button className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-all border border-white/10">
+                        <Mic size={24} />
+                      </button>
+                      <button className="px-8 py-4 bg-blue-600 text-white rounded-2xl font-bold flex items-center gap-2 hover:bg-blue-700 transition-all shadow-xl shadow-blue-900/20">
+                        <CheckCircle2 size={20} /> Mastered
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+
+                {activeMode === 'Quiz' && (
+                  <motion.div
+                    key="quiz"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    className="max-w-2xl mx-auto space-y-8"
+                  >
+                    <div className="space-y-3">
+                      <div className="flex justify-between text-sm text-white/80 font-medium">
+                        <span>Question {currentWordIndex + 1} of {MOCK_WORDS.length}</span>
+                        <span className="text-orange-400">🔥 5 in a row!</span>
+                      </div>
+                      <div className="h-2 bg-white/20 rounded-full overflow-hidden">
+                        <motion.div 
+                          className="h-full bg-emerald-500 rounded-full" 
+                          initial={{ width: 0 }}
+                          animate={{ width: `${((currentWordIndex + 1) / MOCK_WORDS.length) * 100}%` }}
+                        ></motion.div>
+                      </div>
+                    </div>
+
+                    <div className="text-center space-y-4 py-4">
+                      <p className="text-white/60 uppercase tracking-widest text-xs font-bold">What does this word mean?</p>
+                      <h3 className="text-4xl font-bold text-white">{currentWord.word}</h3>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {['Đàm phán, thương lượng', 'Dồi dào, phong phú', 'Cạnh tranh', 'Phát triển'].map((option, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => {
+                            setSelectedOption(idx);
+                            setQuizAnswered(true);
+                          }}
+                          disabled={quizAnswered}
+                          className={`p-6 rounded-2xl text-white text-center font-bold transition-all min-h-[80px] flex items-center justify-center border-2 ${
+                            selectedOption === idx
+                              ? option === currentWord.translation
+                                ? 'bg-emerald-500/20 border-emerald-500'
+                                : 'bg-rose-500/20 border-rose-500'
+                              : quizAnswered && option === currentWord.translation
+                                ? 'bg-emerald-500/20 border-emerald-500'
+                                : 'bg-white/5 border-white/10 hover:bg-white/10'
+                          }`}
+                        >
+                          {option}
+                        </button>
+                      ))}
+                    </div>
+
+                    {quizAnswered && (
+                      <motion.div 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex justify-center pt-4"
+                      >
+                        <button 
+                          onClick={handleNextWord}
+                          className="px-8 py-4 bg-white text-gray-900 rounded-2xl font-bold flex items-center gap-2 hover:bg-gray-100 transition-all shadow-xl"
+                        >
+                          Next Question <ChevronRight size={20} />
+                        </button>
+                      </motion.div>
+                    )}
+                  </motion.div>
+                )}
+
+                {activeMode === 'Write' && (
+                  <motion.div
+                    key="write"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    className="max-w-xl mx-auto text-center space-y-8"
+                  >
+                    <div className="space-y-2">
+                      <p className="text-white/40 uppercase tracking-widest text-xs font-bold">Type the word for:</p>
+                      <p className="text-3xl text-white font-bold">"{currentWord.translation}"</p>
+                    </div>
+
+                    <div className="relative group">
+                      <input
+                        type="text"
+                        value={writeInput}
+                        onChange={(e) => setWriteInput(e.target.value)}
+                        className="w-full p-6 pr-32 text-xl text-center bg-white/5 border-2 border-white/10 rounded-3xl text-white placeholder-white/20 focus:outline-none focus:border-blue-500 transition-all"
+                        placeholder="Type answer..."
+                      />
+                      <button 
+                        onClick={() => {
+                          if (writeInput.toLowerCase() === currentWord.word.toLowerCase()) {
+                            handleNextWord();
+                          } else {
+                            setWriteAttempts(prev => prev + 1);
+                          }
+                        }}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 px-6 py-3 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg"
+                      >
+                        Submit
+                      </button>
+                    </div>
+
+                    <div className="space-y-4">
+                      <div className="flex justify-center gap-3">
+                        {[...Array(3)].map((_, i) => (
+                          <span 
+                            key={i} 
+                            className={`w-3 h-3 rounded-full transition-colors ${
+                              i < writeAttempts ? 'bg-rose-500' : 'bg-white/20'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      <p className="text-xs text-white/40 font-bold uppercase tracking-widest">{writeAttempts}/3 attempts used</p>
+                    </div>
+
+                    <div className="flex justify-center gap-6">
+                      <button className="flex items-center gap-2 text-white/60 hover:text-white text-sm font-bold transition-colors">
+                        <Lightbulb size={16} /> Hint
+                      </button>
+                      <button 
+                        onClick={handleNextWord}
+                        className="flex items-center gap-2 text-white/60 hover:text-white text-sm font-bold transition-colors"
+                      >
+                        Skip <ChevronRight size={16} />
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+
+                {activeMode === 'Review' && (
+                  <motion.div
+                    key="review"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    className="max-w-lg mx-auto space-y-8"
+                  >
+                    <div className="flex justify-center">
+                      <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full">
+                        <BookOpen className="text-blue-400" size={18} />
+                        <span className="text-white font-bold">12 words</span>
+                        <span className="text-white/60">due for review</span>
+                      </div>
+                    </div>
+
+                    <div className="p-10 bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl text-center space-y-2">
+                      <h3 className="text-5xl font-bold text-white tracking-tight">{currentWord.word}</h3>
+                      <p className="text-xl text-white/40 font-mono">{currentWord.phonetic}</p>
+                    </div>
+
+                    <div className="space-y-4">
+                      {!isRevealed ? (
+                        <button 
+                          onClick={() => setIsRevealed(true)}
+                          className="w-full py-5 bg-white/10 hover:bg-white/20 text-white rounded-2xl font-bold transition-all border border-white/10 shadow-xl"
+                        >
+                          Reveal Answer
+                        </button>
+                      ) : (
+                        <motion.div 
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          className="space-y-6"
+                        >
+                          <div className="text-center p-6 bg-white/5 rounded-2xl border border-white/5">
+                            <p className="text-2xl font-bold text-white mb-1">{currentWord.translation}</p>
+                            <p className="text-white/60">{currentWord.definition}</p>
+                          </div>
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            {[
+                              { label: 'Again', time: '1 min', color: 'rose' },
+                              { label: 'Hard', time: '6 hrs', color: 'orange' },
+                              { label: 'Good', time: '1 day', color: 'blue' },
+                              { label: 'Easy', time: '3 days', color: 'emerald' },
+                            ].map((grade) => (
+                              <button
+                                key={grade.label}
+                                onClick={handleNextWord}
+                                className={`flex flex-col items-center p-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition-all group`}
+                              >
+                                <span className={`text-sm font-bold mb-1 group-hover:scale-110 transition-transform ${
+                                  grade.color === 'rose' ? 'text-rose-400' :
+                                  grade.color === 'orange' ? 'text-orange-400' :
+                                  grade.color === 'blue' ? 'text-blue-400' : 'text-emerald-400'
+                                }`}>{grade.label}</span>
+                                <span className="text-white/40 text-[10px] font-bold uppercase">{grade.time}</span>
+                              </button>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
+  if (activeCollection) {
+    const collectionTopics = MOCK_TOPICS[activeCollection.id] || [
+      { id: 'custom-t1', name: 'General Practice', status: 'New', count: 10 },
+      { id: 'custom-t2', name: 'Review Session', status: 'In Progress', count: 5 },
+    ];
+
+    return (
+      <div className="space-y-8 pb-12">
+        <button 
+          onClick={handleBackToCollections}
+          className="flex items-center gap-2 text-gray-500 hover:text-gray-900 font-bold transition-colors"
+        >
+          <ChevronLeft size={20} />
+          Back to Collections
+        </button>
+
+        <div className="flex flex-col md:flex-row gap-8 items-start">
+          <div className="md:w-1/3 lg:w-1/4 sticky top-24">
+            <div className="bg-white rounded-3xl border border-gray-200 p-6 shadow-sm space-y-6">
+              <div className={`w-16 h-16 rounded-2xl flex items-center justify-center text-3xl bg-${activeCollection.color}-100 text-${activeCollection.color}-600`}>
+                {activeCollection.icon}
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">{activeCollection.name}</h1>
+                <p className="text-sm text-gray-500 mt-2">{activeCollection.description}</p>
+              </div>
+              <div className="space-y-3 pt-6 border-t border-gray-100">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-gray-500">Total Words</span>
+                  <span className="font-bold text-gray-900">{activeCollection.wordCount || activeCollection.count}</span>
+                </div>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-gray-500">Topics</span>
+                  <span className="font-bold text-gray-900">{collectionTopics.length}</span>
+                </div>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-gray-500">Level</span>
+                  <span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full font-bold text-[10px] uppercase">
+                    {activeCollection.level || 'B1'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex-1 space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-bold text-gray-900">Select a Topic</h2>
+              <span className="text-xs text-gray-500">{collectionTopics.length} topics available</span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {collectionTopics.map((topic) => (
+                <div 
+                  key={topic.id}
+                  onClick={() => handleTopicClick({ id: topic.id, name: topic.name })}
+                  className="group bg-white p-5 rounded-2xl border border-gray-100 hover:border-blue-500 hover:shadow-md transition-all cursor-pointer flex items-center justify-between"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center text-gray-400 group-hover:bg-blue-50 group-hover:text-blue-500 transition-colors">
+                      <FolderPlus size={20} />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-gray-900">{topic.name}</h3>
+                      <p className="text-xs text-gray-500">{topic.count} words • {topic.status}</p>
+                    </div>
+                  </div>
+                  <ChevronRight size={18} className="text-gray-300 group-hover:text-blue-500 group-hover:translate-x-1 transition-all" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-10 pb-12">
@@ -343,7 +844,7 @@ export default function VocabPage() {
           {FEATURED_COLLECTIONS.filter(c => activeFilter === 'All' || c.category === activeFilter).map((collection) => (
             <div 
               key={collection.id}
-              onClick={() => setSelectedCollection(collection.name)}
+              onClick={() => setActiveCollection(collection)}
               className="group relative bg-white rounded-2xl border border-gray-200 p-5 hover:shadow-lg transition-all cursor-pointer overflow-hidden"
             >
               {collection.isOfficial && (
@@ -397,21 +898,20 @@ export default function VocabPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {collections.map((col) => (
             <motion.div 
-              key={col.name}
+              key={col.id}
               whileHover={{ y: -4 }}
-              onClick={() => setSelectedCollection(col.name)}
-              className={`bg-white p-6 rounded-3xl border transition-all cursor-pointer ${
-                selectedCollection === col.name 
-                  ? 'border-blue-500 ring-2 ring-blue-500/20 shadow-lg' 
-                  : 'border-gray-100 shadow-sm hover:shadow-md'
-              } space-y-4`}
+              onClick={() => setActiveCollection(col)}
+              className={`bg-white p-6 rounded-3xl border transition-all cursor-pointer border-gray-100 shadow-sm hover:shadow-md space-y-4`}
             >
               <div className={`w-12 h-12 ${col.bg} ${col.color} rounded-2xl flex items-center justify-center`}>
                 <Bookmark size={24} fill="currentColor" className="opacity-80" />
               </div>
-              <div>
-                <h3 className="font-bold text-gray-900">{col.name}</h3>
-                <p className="text-xs text-gray-500 mt-1">{col.count} words</p>
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="font-bold text-gray-900">{col.name}</h3>
+                  <p className="text-xs text-gray-500 mt-1">{col.count} words</p>
+                </div>
+                <div className="text-[20px]">{col.icon}</div>
               </div>
               <div className="space-y-2">
                 <div className="flex justify-between text-[10px] font-bold text-gray-400">
@@ -427,378 +927,7 @@ export default function VocabPage() {
         </div>
       </section>
 
-      {/* PRACTICE AREA */}
-      <section className="bg-gradient-to-br from-gray-900 to-slate-800 rounded-3xl p-8 md:p-12 shadow-2xl relative overflow-hidden">
-        {/* Decorative background blobs */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-purple-500/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
-
-        <div className="relative z-10 space-y-8">
-          {/* Selected Collection Badge */}
-          <div className="flex justify-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full border border-white/10">
-              <Bookmark size={16} className="text-blue-400" />
-              <span className="text-white text-sm font-bold">{selectedCollection || 'All Words'}</span>
-              {selectedCollection && (
-                <button 
-                  onClick={() => setSelectedCollection(null)}
-                  className="ml-1 p-1 hover:bg-white/10 rounded-full text-white/60 hover:text-white"
-                >
-                  <X size={14} />
-                </button>
-              )}
-            </div>
-          </div>
-          {/* SESSION STATS BAR */}
-          <div className="hidden md:flex items-center justify-between">
-            <div className="flex items-center gap-4 flex-1 max-w-xs">
-              <span className="text-sm font-bold text-white">{currentWordIndex + 1}/{MOCK_WORDS.length} words</span>
-              <div className="flex-1 h-2 bg-white/20 rounded-full">
-                <div 
-                  className="h-full bg-blue-500 rounded-full transition-all duration-500" 
-                  style={{ width: `${((currentWordIndex + 1) / MOCK_WORDS.length) * 100}%` }}
-                ></div>
-              </div>
-            </div>
-            <div className="flex items-center gap-6">
-              <div className="text-center">
-                <p className="text-2xl font-bold text-white">85%</p>
-                <p className="text-xs text-white/60">Accuracy</p>
-              </div>
-              <div className="w-px h-8 bg-white/20"></div>
-              <div className="text-center">
-                <p className="text-2xl font-bold text-orange-400">🔥 5</p>
-                <p className="text-xs text-white/60">Streak</p>
-              </div>
-              <div className="w-px h-8 bg-white/20"></div>
-              <div className="text-center">
-                <p className="text-2xl font-bold text-blue-400">120</p>
-                <p className="text-xs text-white/60">XP</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="md:hidden space-y-3">
-            <div className="flex justify-between text-sm">
-              <span className="text-white font-bold">Session Progress</span>
-              <span className="text-white/80">{currentWordIndex + 1}/{MOCK_WORDS.length}</span>
-            </div>
-            <div className="h-2 bg-white/20 rounded-full">
-              <div 
-                className="h-full bg-blue-500 rounded-full transition-all duration-500" 
-                style={{ width: `${((currentWordIndex + 1) / MOCK_WORDS.length) * 100}%` }}
-              ></div>
-            </div>
-            <div className="flex justify-around">
-              <div className="text-center">
-                <p className="text-lg font-bold text-white">85%</p>
-                <p className="text-xs text-white/60">Accuracy</p>
-              </div>
-              <div className="text-center">
-                <p className="text-lg font-bold text-orange-400">🔥 5</p>
-                <p className="text-xs text-white/60">Streak</p>
-              </div>
-            </div>
-          </div>
-
-          {/* TABS NAVIGATION */}
-          <div className="flex justify-center">
-            <div className="flex p-1 bg-white/10 rounded-xl max-w-md w-full">
-              {practiceModes.map((mode) => (
-                <button
-                  key={mode}
-                  onClick={() => setActiveMode(mode)}
-                  className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-bold transition-all ${
-                    activeMode === mode
-                      ? 'bg-white text-gray-900 shadow-lg'
-                      : 'text-white/60 hover:text-white'
-                  }`}
-                >
-                  {mode}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* TAB CONTENT AREA */}
-          <div className="relative min-h-[400px]">
-            <AnimatePresence mode="wait">
-              {activeMode === 'Flashcard' && (
-                <motion.div
-                  key="flashcard"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  className="flex flex-col items-center space-y-8"
-                >
-                  <div 
-                    className="w-full max-w-md h-80 relative cursor-pointer group" 
-                    style={{ perspective: '1000px' }}
-                    onClick={() => setIsFlipped(!isFlipped)}
-                  >
-                    <motion.div
-                      className="w-full h-full relative preserve-3d"
-                      animate={{ rotateY: isFlipped ? 180 : 0 }}
-                      transition={{ duration: 0.6, type: "spring", stiffness: 260, damping: 20 }}
-                    >
-                      {/* Front */}
-                      <div className="absolute inset-0 backface-hidden bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 flex flex-col items-center justify-center text-center space-y-4 group-hover:bg-white/10 transition-colors">
-                        <div className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-[10px] font-bold uppercase tracking-widest">
-                          {currentWord.level} • {currentWord.partOfSpeech}
-                        </div>
-                        <h3 className="text-5xl font-bold text-white tracking-tight">{currentWord.word}</h3>
-                        <p className="text-lg text-white/40 font-mono">{currentWord.phonetic}</p>
-                        <div className="pt-4 flex items-center gap-2 text-white/20 text-xs font-medium">
-                          <RotateCcw size={14} />
-                          Tap to flip
-                        </div>
-                      </div>
-
-                      {/* Back */}
-                      <div className="absolute inset-0 backface-hidden bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8 flex flex-col items-center justify-center text-center space-y-6 rotate-y-180">
-                        <div className="space-y-2">
-                          <h4 className="text-2xl font-bold text-white">{currentWord.translation}</h4>
-                          <p className="text-white/60 leading-relaxed">{currentWord.definition}</p>
-                        </div>
-                        <div className="p-4 bg-white/5 rounded-xl border border-white/5 w-full">
-                          <p className="text-sm text-white/80 italic leading-relaxed">
-                            "{currentWord.example}"
-                          </p>
-                        </div>
-                      </div>
-                    </motion.div>
-                  </div>
-
-                  <div className="flex items-center justify-between w-full max-w-lg">
-                    <button 
-                      onClick={handlePrevWord}
-                      className="flex items-center gap-2 px-4 py-2 text-white/60 hover:text-white font-bold transition-colors"
-                    >
-                      <ChevronLeft size={20} /> Prev
-                    </button>
-                    <span className="text-white/40 font-mono text-sm">{currentWordIndex + 1} / {MOCK_WORDS.length}</span>
-                    <button 
-                      onClick={handleNextWord}
-                      className="flex items-center gap-2 px-4 py-2 text-white/60 hover:text-white font-bold transition-colors"
-                    >
-                      Next <ChevronRight size={20} />
-                    </button>
-                  </div>
-
-                  <div className="flex items-center gap-4">
-                    <button className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-all border border-white/10">
-                      <Volume2 size={24} />
-                    </button>
-                    <button className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-all border border-white/10">
-                      <Mic size={24} />
-                    </button>
-                    <button className="px-8 py-4 bg-blue-600 text-white rounded-2xl font-bold flex items-center gap-2 hover:bg-blue-700 transition-all shadow-xl shadow-blue-900/20">
-                      <CheckCircle2 size={20} /> Mastered
-                    </button>
-                  </div>
-                </motion.div>
-              )}
-
-              {activeMode === 'Quiz' && (
-                <motion.div
-                  key="quiz"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  className="max-w-2xl mx-auto space-y-8"
-                >
-                  <div className="space-y-3">
-                    <div className="flex justify-between text-sm text-white/80 font-medium">
-                      <span>Question {currentWordIndex + 1} of {MOCK_WORDS.length}</span>
-                      <span className="text-orange-400">🔥 5 in a row!</span>
-                    </div>
-                    <div className="h-2 bg-white/20 rounded-full overflow-hidden">
-                      <motion.div 
-                        className="h-full bg-emerald-500 rounded-full" 
-                        initial={{ width: 0 }}
-                        animate={{ width: `${((currentWordIndex + 1) / MOCK_WORDS.length) * 100}%` }}
-                      ></motion.div>
-                    </div>
-                  </div>
-
-                  <div className="text-center space-y-4 py-4">
-                    <p className="text-white/60 uppercase tracking-widest text-xs font-bold">What does this word mean?</p>
-                    <h3 className="text-4xl font-bold text-white">{currentWord.word}</h3>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {['Đàm phán, thương lượng', 'Dồi dào, phong phú', 'Cạnh tranh', 'Phát triển'].map((option, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => {
-                          setSelectedOption(idx);
-                          setQuizAnswered(true);
-                        }}
-                        disabled={quizAnswered}
-                        className={`p-6 rounded-2xl text-white text-center font-bold transition-all min-h-[80px] flex items-center justify-center border-2 ${
-                          selectedOption === idx
-                            ? option === currentWord.translation
-                              ? 'bg-emerald-500/20 border-emerald-500'
-                              : 'bg-rose-500/20 border-rose-500'
-                            : quizAnswered && option === currentWord.translation
-                              ? 'bg-emerald-500/20 border-emerald-500'
-                              : 'bg-white/5 border-white/10 hover:bg-white/10'
-                        }`}
-                      >
-                        {option}
-                      </button>
-                    ))}
-                  </div>
-
-                  {quizAnswered && (
-                    <motion.div 
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="flex justify-center pt-4"
-                    >
-                      <button 
-                        onClick={handleNextWord}
-                        className="px-8 py-4 bg-white text-gray-900 rounded-2xl font-bold flex items-center gap-2 hover:bg-gray-100 transition-all shadow-xl"
-                      >
-                        Next Question <ChevronRight size={20} />
-                      </button>
-                    </motion.div>
-                  )}
-                </motion.div>
-              )}
-
-              {activeMode === 'Write' && (
-                <motion.div
-                  key="write"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  className="max-w-xl mx-auto text-center space-y-8"
-                >
-                  <div className="space-y-2">
-                    <p className="text-white/40 uppercase tracking-widest text-xs font-bold">Type the word for:</p>
-                    <p className="text-3xl text-white font-bold">"{currentWord.translation}"</p>
-                  </div>
-
-                  <div className="relative group">
-                    <input
-                      type="text"
-                      value={writeInput}
-                      onChange={(e) => setWriteInput(e.target.value)}
-                      className="w-full p-6 pr-32 text-xl text-center bg-white/5 border-2 border-white/10 rounded-3xl text-white placeholder-white/20 focus:outline-none focus:border-blue-500 transition-all"
-                      placeholder="Type answer..."
-                    />
-                    <button 
-                      onClick={() => {
-                        if (writeInput.toLowerCase() === currentWord.word.toLowerCase()) {
-                          handleNextWord();
-                        } else {
-                          setWriteAttempts(prev => prev + 1);
-                        }
-                      }}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 px-6 py-3 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg"
-                    >
-                      Submit
-                    </button>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="flex justify-center gap-3">
-                      {[...Array(3)].map((_, i) => (
-                        <span 
-                          key={i} 
-                          className={`w-3 h-3 rounded-full transition-colors ${
-                            i < writeAttempts ? 'bg-rose-500' : 'bg-white/20'
-                          }`}
-                        />
-                      ))}
-                    </div>
-                    <p className="text-xs text-white/40 font-bold uppercase tracking-widest">{writeAttempts}/3 attempts used</p>
-                  </div>
-
-                  <div className="flex justify-center gap-6">
-                    <button className="flex items-center gap-2 text-white/60 hover:text-white text-sm font-bold transition-colors">
-                      <Lightbulb size={16} /> Hint
-                    </button>
-                    <button 
-                      onClick={handleNextWord}
-                      className="flex items-center gap-2 text-white/60 hover:text-white text-sm font-bold transition-colors"
-                    >
-                      Skip <ChevronRight size={16} />
-                    </button>
-                  </div>
-                </motion.div>
-              )}
-
-              {activeMode === 'Review' && (
-                <motion.div
-                  key="review"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  className="max-w-lg mx-auto space-y-8"
-                >
-                  <div className="flex justify-center">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full">
-                      <BookOpen className="text-blue-400" size={18} />
-                      <span className="text-white font-bold">12 words</span>
-                      <span className="text-white/60">due for review</span>
-                    </div>
-                  </div>
-
-                  <div className="p-10 bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl text-center space-y-2">
-                    <h3 className="text-5xl font-bold text-white tracking-tight">{currentWord.word}</h3>
-                    <p className="text-xl text-white/40 font-mono">{currentWord.phonetic}</p>
-                  </div>
-
-                  <div className="space-y-4">
-                    {!isRevealed ? (
-                      <button 
-                        onClick={() => setIsRevealed(true)}
-                        className="w-full py-5 bg-white/10 hover:bg-white/20 text-white rounded-2xl font-bold transition-all border border-white/10 shadow-xl"
-                      >
-                        Reveal Answer
-                      </button>
-                    ) : (
-                      <motion.div 
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className="space-y-6"
-                      >
-                        <div className="text-center p-6 bg-white/5 rounded-2xl border border-white/5">
-                          <p className="text-2xl font-bold text-white mb-1">{currentWord.translation}</p>
-                          <p className="text-white/60">{currentWord.definition}</p>
-                        </div>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                          {[
-                            { label: 'Again', time: '1 min', color: 'rose' },
-                            { label: 'Hard', time: '6 hrs', color: 'orange' },
-                            { label: 'Good', time: '1 day', color: 'blue' },
-                            { label: 'Easy', time: '3 days', color: 'emerald' },
-                          ].map((grade) => (
-                            <button
-                              key={grade.label}
-                              onClick={handleNextWord}
-                              className={`flex flex-col items-center p-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition-all group`}
-                            >
-                              <span className={`text-sm font-bold mb-1 group-hover:scale-110 transition-transform ${
-                                grade.color === 'rose' ? 'text-rose-400' :
-                                grade.color === 'orange' ? 'text-orange-400' :
-                                grade.color === 'blue' ? 'text-blue-400' : 'text-emerald-400'
-                              }`}>{grade.label}</span>
-                              <span className="text-white/40 text-[10px] font-bold uppercase">{grade.time}</span>
-                            </button>
-                          ))}
-                        </div>
-                      </motion.div>
-                    )}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </div>
-      </section>
+      {/* Removed Practice area from here as it is now conditional */}
 
       {/* Recently Added Section */}
       <section className="space-y-6">
