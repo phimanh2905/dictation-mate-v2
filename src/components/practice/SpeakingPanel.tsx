@@ -5,34 +5,34 @@ import {
 } from 'lucide-react';
 import RecordingArea from './RecordingArea';
 
-type SpeakingState = 'ready' | 'recording' | 'analyzing' | 'result';
+import { RecordingState, AssessmentWord } from '../../types';
 
 export default function SpeakingPanel() {
-  const [state, setState] = useState<SpeakingState>('ready');
+  const [state, setState] = useState<RecordingState>('idle');
   const [activeQuestion, setActiveQuestion] = useState(1);
   const totalQuestions = 901;
   const questions = Array.from({ length: 10 }, (_, i) => i + 1); // Mock first 10 questions
 
-  const words = [
-    { text: 'the', score: 95, status: 'exact' as const, ipa: 'ðə' },
-    { text: 'key', score: 100, status: 'exact' as const, ipa: 'kiː' },
-    { text: 'is', score: 90, status: 'exact' as const, ipa: 'ɪz' },
-    { text: 'to', score: 88, status: 'exact' as const, ipa: 'tə' },
-    { text: 'research', score: 75, status: 'close' as const, ipa: 'rɪˈsɜːrtʃ' },
-    { text: 'market', score: 92, status: 'exact' as const, ipa: 'ˈmɑːrkɪt' },
-    { text: 'rates', score: 45, status: 'wrong' as const, ipa: 'reɪts' },
-    { text: 'beforehand', score: 80, status: 'exact' as const, ipa: 'bɪˈfɔːrhænd' },
+  const words: AssessmentWord[] = [
+    { text: 'the', isCorrect: true, ipa: 'ðə' },
+    { text: 'key', isCorrect: true, ipa: 'kiː' },
+    { text: 'is', isCorrect: true, ipa: 'ɪz' },
+    { text: 'to', isCorrect: true, ipa: 'tə' },
+    { text: 'research', isCorrect: false, ipa: 'rɪˈsɜːrtʃ' },
+    { text: 'market', isCorrect: true, ipa: 'ˈmɑːrkɪt' },
+    { text: 'rates', isCorrect: false, ipa: 'reɪts' },
+    { text: 'beforehand', isCorrect: true, ipa: 'bɪˈfɔːrhænd' },
   ];
 
   const handleRecord = () => setState('recording');
   const handleStop = () => {
-    setState('analyzing');
+    setState('evaluating');
     setTimeout(() => setState('result'), 1500);
   };
-  const handleRetry = () => setState('ready');
+  const handleRetry = () => setState('idle');
   const handleNextQuestion = () => {
     setActiveQuestion(prev => Math.min(totalQuestions, prev + 1));
-    setState('ready');
+    setState('idle');
   };
 
   return (

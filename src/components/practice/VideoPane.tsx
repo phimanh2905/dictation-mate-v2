@@ -80,6 +80,19 @@ export default function VideoPane({ video, posterOnly = false }: VideoPaneProps)
 
   return (
     <div className="flex-1 flex flex-col bg-slate-950 h-full relative overflow-hidden">
+      {/* Floating Overlays */}
+      <div className="absolute top-4 left-4 flex items-center gap-2 z-20">
+        <div className="flex items-center bg-black/40 backdrop-blur-md rounded-xl border border-white/10 overflow-hidden">
+          <button className="px-3 py-1.5 text-[10px] font-black text-white/60 hover:text-white hover:bg-white/10 transition-all border-r border-white/10">
+            A-B LOOP
+          </button>
+          <div className="flex items-center px-1">
+            <button className={`px-2 py-1.5 text-[10px] font-black transition-all ${playbackSpeed === 0.75 ? 'text-blue-400' : 'text-white/40 hover:text-white'}`} onClick={() => setPlaybackSpeed(0.75)}>0.75x</button>
+            <button className={`px-2 py-1.5 text-[10px] font-black transition-all ${playbackSpeed === 1 ? 'text-blue-400' : 'text-white/40 hover:text-white'}`} onClick={() => setPlaybackSpeed(1)}>1x</button>
+          </div>
+        </div>
+      </div>
+
       {/* Video Area */}
       <div className="flex-1 flex items-center justify-center bg-black relative group">
         <img 

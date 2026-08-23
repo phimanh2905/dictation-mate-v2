@@ -71,9 +71,27 @@ export interface UserVideo extends Video {
 export type PracticeMode = 'dictation' | 'shadowing' | 'speaking' | 'summary';
 
 export interface TranscriptLine {
-  timestamp: number;
+  timestamp: string;
   text: string;
+  ipa?: string;
+  translation?: string;
   chunkIndex: number;
+}
+
+export type RecordingState = 'idle' | 'recording' | 'evaluating' | 'result';
+
+export interface AssessmentWord {
+  text: string;
+  isCorrect: boolean;
+  ipa?: string;
+}
+
+export interface PracticeResult {
+  score: number;
+  attemptCount: number;
+  maxAttempts: number;
+  userAudioUrl?: string;
+  words: AssessmentWord[];
 }
 
 export type ReplayCount = 1 | 3 | 5;

@@ -1,18 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Mic, Play, RotateCcw, Sparkles, ChevronRight, 
   Volume2, CheckCircle2, Square, Info, EyeOff, 
   ChevronDown, ChevronUp, Check, AlertTriangle, X 
 } from 'lucide-react';
-
-export type RecordingState = 'ready' | 'recording' | 'analyzing' | 'result';
-
-interface Word {
-  text: string;
-  status: 'exact' | 'close' | 'wrong';
-  ipa?: string;
-}
+import { RecordingState, AssessmentWord } from '../../types';
 
 interface RecordingAreaProps {
   state: RecordingState;
@@ -23,7 +16,7 @@ interface RecordingAreaProps {
   accuracy: number;
   attemptCount: number;
   referenceText: string;
-  words: Word[];
+  words: AssessmentWord[];
   userSpeech: string;
   feedback: string;
   aiFeedbackDetail: string;
@@ -47,53 +40,28 @@ export default function RecordingArea({
   recordedAudioUrl,
   className = ""
 }: RecordingAreaProps) {
-  const [showIPA, setShowIPA] = useState(false);
-  const [showAIFeedback, setShowAIFeedback] = useState(false);
-
-  const getStatusIcon = (status: Word['status']) => {
-    switch (status) {
-      case 'exact': return <Check size={10} className="text-emerald-600 dark:text-emerald-400" />;
-      case 'close': return <AlertTriangle size={10} className="text-amber-600 dark:text-amber-400" />;
-      case 'wrong': return <X size={10} className="text-rose-600 dark:text-rose-400" />;
-    }
-  };
-
-  const getStatusClasses = (status: Word['status']) => {
-    switch (status) {
-      case 'exact': return 'bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20';
-      case 'close': return 'bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20';
-      case 'wrong': return 'bg-rose-50 text-rose-700 border-rose-100 dark:bg-rose-500/10 dark:text-rose-400 dark:border-rose-500/20';
-    }
-  };
-
-  const getScoreEmoji = (score: number) => {
-    if (score >= 90) return '🔥';
-    if (score >= 70) return '🎯';
-    if (score >= 50) return '💪';
-    return '🌱';
-  };
-
   return (
-    <div className={`bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden flex flex-col ${className}`}>
-      <div className="flex-1 p-4 overflow-y-auto no-scrollbar min-h-[180px] lg:min-h-[auto]">
+    <div className={`flex-1 flex flex-col min-h-0 ${className}`}>
+      <div className="flex-1 overflow-y-auto no-scrollbar py-4">
         <AnimatePresence mode="wait">
-          {state === 'ready' && (
+          {state === 'idle' && (
             <motion.div 
-              key="ready"
+              key="idle"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="h-full flex flex-col items-center justify-center gap-3 py-4"
+              className="flex flex-col items-center justify-center gap-6 py-12"
             >
               <button
                 onClick={onRecord}
-                className="w-14 h-14 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-200 dark:shadow-none hover:bg-blue-700 hover:scale-105 transition-all active:scale-95 group"
+                className="w-24 h-24 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-2xl shadow-blue-200 hover:bg-blue-700 hover:scale-105 transition-all active:scale-95 group relative"
               >
-                <Mic size={24} />
+                <div className="absolute inset-0 bg-blue-600 rounded-full animate-ping opacity-20" />
+                <Mic size={40} className="relative z-10" />
               </button>
-              <div className="text-center">
-                <p className="text-xs font-bold text-gray-700 dark:text-gray-300">Nhấn để bắt đầu nói</p>
-                <p className="text-[9px] text-gray-400 uppercase tracking-wider mt-0.5">Click to start recording</p>
+              <div className="text-center space-y-1">
+                <p className="text-lg font-bold text-slate-800">Ready to speak?</p>
+                <p className="text-sm text-slate-400 font-medium uppercase tracking-widest">Click or press Space to start</p>
               </div>
             </motion.div>
           )}
@@ -104,165 +72,182 @@ export default function RecordingArea({
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="h-full flex flex-col items-center justify-center gap-4 py-4 w-full"
+              className="flex flex-col items-center justify-center gap-12 w-full py-8"
             >
-              <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 text-sm font-bold animate-pulse">
-                <div className="w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full" />
-                Recording...
+              <div className="flex items-center gap-3 px-4 py-2 bg-rose-50 rounded-full border border-rose-100">
+                <div className="w-2.5 h-2.5 bg-rose-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(244,63,94,0.6)]" />
+                <span className="text-rose-600 text-sm font-black uppercase tracking-widest">Recording... 0:04 / 0:10</span>
               </div>
               
-              <div className="w-full max-w-sm h-10 bg-blue-50 dark:bg-blue-900/20 rounded-xl flex items-center justify-center gap-1.5 px-4">
-                {[...Array(20)].map((_, i) => (
+              <div className="w-full max-w-md h-24 flex items-center justify-center gap-1.5 px-4 overflow-hidden">
+                {[...Array(40)].map((_, i) => (
                   <motion.div 
                     key={i} 
-                    animate={{ height: [8, Math.random() * 20 + 8, 8] }}
-                    transition={{ repeat: Infinity, duration: 0.5, delay: i * 0.05 }}
-                    className="w-1 bg-blue-400 dark:bg-blue-500 rounded-full" 
+                    animate={{ 
+                      height: [
+                        12, 
+                        Math.random() * (i > 15 && i < 25 ? 80 : 30) + 12, 
+                        12
+                      ],
+                      opacity: [0.4, 1, 0.4]
+                    }}
+                    transition={{ 
+                      repeat: Infinity, 
+                      duration: 0.4 + Math.random() * 0.4, 
+                      delay: i * 0.02 
+                    }}
+                    className="w-1.5 bg-indigo-500 rounded-full shadow-[0_0_10px_rgba(99,102,241,0.3)]" 
                   />
                 ))}
               </div>
 
-              <button
-                onClick={onStop}
-                className="w-10 h-10 rounded-full bg-rose-500 text-white flex items-center justify-center shadow-lg shadow-rose-200 dark:shadow-none hover:bg-rose-600 transition-all active:scale-95"
-              >
-                <Square size={16} fill="currentColor" />
-              </button>
+              <div className="flex flex-col items-center gap-4">
+                <button
+                  onClick={onStop}
+                  className="w-20 h-20 rounded-full bg-rose-500 text-white flex items-center justify-center shadow-2xl shadow-rose-200 hover:bg-rose-600 transition-all active:scale-95 group relative"
+                >
+                  <div className="absolute inset-0 bg-rose-500 rounded-full animate-pulse opacity-30" />
+                  <Square size={28} fill="currentColor" className="relative z-10" />
+                </button>
+                <p className="text-xs font-black text-slate-400 uppercase tracking-widest">Press Space to Stop</p>
+              </div>
             </motion.div>
           )}
 
-          {state === 'analyzing' && (
+          {state === 'evaluating' && (
             <motion.div 
-              key="analyzing"
+              key="evaluating"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="h-full flex flex-col items-center justify-center gap-3 py-8"
+              className="flex flex-col items-center justify-center gap-6 py-20"
             >
-              <div className="w-10 h-10 border-4 border-blue-100 dark:border-blue-900 border-t-blue-600 dark:border-t-blue-400 rounded-full animate-spin" />
-              <p className="text-xs font-bold text-gray-600 dark:text-gray-400">Đang phân tích giọng nói...</p>
+              <div className="relative w-16 h-16">
+                <div className="absolute inset-0 border-4 border-blue-100 rounded-full" />
+                <div className="absolute inset-0 border-4 border-t-blue-600 rounded-full animate-spin" />
+              </div>
+              <div className="text-center space-y-1">
+                <p className="text-sm font-bold text-slate-700 uppercase tracking-widest">AI is evaluating...</p>
+                <p className="text-xs text-slate-400">Comparing your pronunciation to the native speaker</p>
+              </div>
             </motion.div>
           )}
 
           {state === 'result' && (
             <motion.div 
               key="result"
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="w-full space-y-3"
+              className="w-full space-y-4"
             >
-              {/* 1. Score Row */}
-              <div className="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-2">
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">{getScoreEmoji(accuracy)}</span>
-                  <div className="flex flex-col">
-                    <span className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest leading-none">Accuracy</span>
-                    <span className="text-xl font-black text-gray-900 dark:text-white">{accuracy}%</span>
-                  </div>
-                  <div className="h-8 w-px bg-gray-100 dark:bg-gray-800 mx-1" />
-                  <div className="flex flex-col">
-                    <span className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest leading-none">Attempt</span>
-                    <span className="text-sm font-bold text-gray-700 dark:text-gray-300">#{attemptCount}</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                   {recordedAudioUrl ? (
-                     <audio 
-                       src={recordedAudioUrl} 
-                       controls 
-                       className="h-7 w-28 lg:w-32 dark:invert focus:outline-none rounded-lg"
-                     />
-                   ) : (
-                     <button className="w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center hover:bg-blue-100 transition-colors">
-                      <Play size={16} fill="currentColor" />
-                    </button>
-                   )}
-                  <button 
-                    onClick={() => setShowIPA(!showIPA)}
-                    className={`px-2 py-1 rounded text-[10px] font-bold transition-colors ${
-                      showIPA ? "bg-blue-600 text-white" : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
-                    }`}
-                  >
-                    IPA
-                  </button>
-                </div>
-              </div>
-
-              {/* 2. Reference Text & User Quote */}
-              <div className="space-y-2">
-                <div className="flex flex-wrap items-center gap-x-1 gap-y-2">
-                  {words.map((word, idx) => (
-                    <div key={idx} className="flex flex-col items-center">
-                       <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-sm font-bold border transition-all ${getStatusClasses(word.status)}`}>
-                        {word.text}
-                        {getStatusIcon(word.status)}
-                      </span>
-                      {showIPA && word.ipa && (
-                        <span className="text-[10px] font-medium text-gray-400 mt-0.5 font-mono">
-                          {word.ipa}
-                        </span>
-                      )}
-                    </div>
-                  ))}
-                </div>
-                <p className="text-xs italic text-gray-500 dark:text-gray-400 font-medium pl-2 border-l-2 border-gray-100 dark:border-gray-800">
-                  "{userSpeech}"
-                </p>
-              </div>
-
-              {/* 3. Feedback Row */}
-              <div className="flex items-center gap-2 py-1">
-                <span className="text-[10px] text-gray-400 dark:text-gray-500 font-bold uppercase tracking-wider">Feedback:</span>
-                <span className="text-xs text-gray-600 dark:text-gray-400 font-medium">{feedback}</span>
-              </div>
-
-              {/* 4. AI Feedback Expandable */}
-              <div>
-                <button 
-                  onClick={() => setShowAIFeedback(!showAIFeedback)}
-                  className="flex items-center gap-1.5 text-[10px] font-bold text-blue-600 dark:text-blue-400 hover:opacity-80 transition-opacity"
-                >
-                  <Sparkles size={12} />
-                  {showAIFeedback ? "Ẩn phân tích AI" : "Xem phân tích AI chi tiết"}
-                  {showAIFeedback ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
-                </button>
-                <AnimatePresence>
-                  {showAIFeedback && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      className="overflow-hidden"
-                    >
-                      <div className="mt-2 text-xs text-gray-600 dark:text-gray-400 leading-relaxed bg-blue-50/50 dark:bg-blue-900/10 p-2.5 rounded-xl border border-blue-100/50 dark:border-blue-900/30">
-                        {aiFeedbackDetail}
+              {/* Unified Result Card with 3 rows */}
+              <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden divide-y divide-slate-50">
+                {/* Row 1: Score & Audio Comparison */}
+                <div className="p-6 flex items-center justify-between gap-8">
+                  <div className="flex items-center gap-6">
+                    {/* Score Ring */}
+                    <div className="relative w-16 h-16 flex items-center justify-center">
+                      <svg className="w-full h-full -rotate-90">
+                        <circle cx="32" cy="32" r="28" className="stroke-slate-100 fill-none" strokeWidth="6" />
+                        <motion.circle 
+                          cx="32" cy="32" r="28" 
+                          className="stroke-blue-600 fill-none" 
+                          strokeWidth="6" 
+                          strokeLinecap="round"
+                          initial={{ strokeDasharray: "176", strokeDashoffset: "176" }}
+                          animate={{ strokeDashoffset: 176 - (176 * accuracy) / 100 }}
+                          transition={{ duration: 1.5, ease: "easeOut" }}
+                        />
+                      </svg>
+                      <div className="absolute inset-0 flex flex-col items-center justify-center">
+                        <span className="text-base font-black text-slate-900">{accuracy}%</span>
                       </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                    </div>
+                    
+                    <div className="space-y-0.5">
+                      <h4 className="text-base font-bold text-slate-900 leading-tight">Good effort!</h4>
+                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{attemptCount}/{3} attempts</p>
+                    </div>
+                  </div>
+
+                  <div className="flex-1 flex items-center gap-2 max-w-[280px]">
+                    <button className="flex items-center gap-2 px-3 py-2 bg-slate-50 hover:bg-slate-100 rounded-xl border border-slate-100 transition-colors group">
+                      <Play size={12} fill="currentColor" className="text-slate-900 group-hover:scale-110 transition-transform" />
+                      <span className="text-xs font-bold text-slate-700 whitespace-nowrap">Native</span>
+                    </button>
+                    <div className="flex-1 flex items-center gap-2 px-3 py-2 bg-blue-50 rounded-xl border border-blue-100">
+                      <Volume2 size={12} className="text-blue-600" />
+                      <div className="flex-1 h-5 flex items-center gap-0.5">
+                        {[...Array(12)].map((_, i) => (
+                          <div key={i} className="flex-1 bg-blue-300 rounded-full" style={{ height: `${Math.random() * 80 + 20}%` }} />
+                        ))}
+                      </div>
+                      <span className="text-[9px] font-mono font-bold text-blue-600">0:08</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Row 2: Word-by-word Assessment */}
+                <div className="p-6">
+                  <div className="flex flex-wrap gap-2">
+                    {words.map((word, idx) => (
+                      <button 
+                        key={idx}
+                        className={`group px-3 py-1.5 rounded-xl border-2 flex items-center gap-1.5 transition-all hover:scale-105 active:scale-95 ${
+                          word.isCorrect 
+                            ? 'bg-emerald-50 border-emerald-100 text-emerald-700' 
+                            : 'bg-rose-50 border-rose-100 text-rose-700'
+                        }`}
+                      >
+                        <span className="text-xs font-bold">{word.text}</span>
+                        {word.isCorrect ? <Check size={12} strokeWidth={3} className="text-emerald-500" /> : <X size={12} strokeWidth={3} className="text-rose-500" />}
+                        
+                        {!word.isCorrect && word.ipa && (
+                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-900 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                            IPA: {word.ipa}
+                          </div>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Row 3: AI Tip Box */}
+                <div className="p-4 bg-blue-50/30">
+                  <div className="flex items-center gap-3">
+                    <Sparkles size={14} className="text-blue-500 shrink-0" />
+                    <p className="text-xs font-medium text-slate-600">
+                      <span className="font-bold text-blue-600 mr-1">💡 AI Tip:</span> 
+                      Pay attention to the ending sound /ʃ/ in 'English' and the stress on 'listening'.
+                    </p>
+                  </div>
+                </div>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
 
-      {/* 5. Sticky Actions Footer */}
-      <div className="p-3 bg-gray-50/80 dark:bg-gray-800/50 backdrop-blur-sm border-t border-gray-100 dark:border-gray-800 flex items-center justify-between gap-3 sticky bottom-0">
-        <button
+      {/* Sticky Bottom Action Bar */}
+      <footer className="h-14 bg-white border-t border-slate-100 px-6 flex items-center justify-between shrink-0 -mx-10 mt-auto">
+        <button 
           onClick={onRetry}
-          className="flex-1 py-1.5 px-4 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 rounded-xl text-xs font-bold hover:bg-gray-50 dark:hover:bg-gray-700 transition-all flex items-center justify-center gap-1.5 active:scale-95 shadow-sm"
+          disabled={state !== 'result'}
+          className="flex items-center gap-2 px-4 py-2 border-2 border-slate-100 rounded-xl text-xs font-black text-slate-400 hover:bg-slate-50 hover:border-slate-200 hover:text-slate-900 disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-95"
         >
           <RotateCcw size={14} />
-          Thử lại
+          Try Again <span className="text-slate-300 ml-1 font-bold">(Space)</span>
         </button>
-        <button
+
+        <button 
           onClick={onNext}
-          className="flex-1 py-1.5 px-4 bg-blue-600 text-white rounded-xl text-xs font-bold hover:bg-blue-700 transition-all flex items-center justify-center gap-1.5 active:scale-95 shadow-md shadow-blue-100 dark:shadow-none"
+          className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-xl text-xs font-black hover:bg-blue-700 transition-all active:scale-95 shadow-lg shadow-blue-100"
         >
-          Tiếp tục
-          <ChevronRight size={14} />
+          Next Sentence <span className="text-blue-200 ml-1 font-bold">(Enter ↵)</span>
+          <ChevronRight size={14} strokeWidth={3} />
         </button>
-      </div>
+      </footer>
     </div>
   );
 }
+

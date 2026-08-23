@@ -4,31 +4,31 @@ import {
   Play, Clock, 
   ChevronLeft, ChevronRight, Repeat, Volume2
 } from 'lucide-react';
-import { TranscriptLine } from '../../types';
-import RecordingArea, { RecordingState } from './RecordingArea';
+import { RecordingState, TranscriptLine, AssessmentWord } from '../../types';
+import RecordingArea from './RecordingArea';
 
 const MOCK_TRANSCRIPT: TranscriptLine[] = [
-  { timestamp: 0, text: "Welcome to this lesson on salary negotiation.", chunkIndex: 0 },
-  { timestamp: 5, text: "Today we'll cover the most important strategies.", chunkIndex: 1 },
-  { timestamp: 10, text: "First, you need to understand your market value.", chunkIndex: 2 },
-  { timestamp: 15, text: "The key is to research market rates beforehand.", chunkIndex: 3 },
-  { timestamp: 20, text: "This gives you a strong foundation for your request.", chunkIndex: 4 },
+  { timestamp: "0:00", text: "Welcome to this lesson on salary negotiation.", chunkIndex: 0 },
+  { timestamp: "0:05", text: "Today we'll cover the most important strategies.", chunkIndex: 1 },
+  { timestamp: "0:10", text: "First, you need to understand your market value.", chunkIndex: 2 },
+  { timestamp: "0:15", text: "The key is to research market rates beforehand.", chunkIndex: 3 },
+  { timestamp: "0:20", text: "This gives you a strong foundation for your request.", chunkIndex: 4 },
 ];
 
 export default function ShadowingPanel() {
-  const [recorderState, setRecorderState] = useState<RecordingState>('ready');
+  const [recorderState, setRecorderState] = useState<RecordingState>('idle');
   const [activeQuestion, setActiveQuestion] = useState(1);
   const totalQuestions = 901;
   const questions = Array.from({ length: 10 }, (_, i) => i + 1); // Mock first 10 questions
 
-  const words = [
-    { text: "Welcome", status: "exact" as const, ipa: "ˈwɛlkəm" },
-    { text: "to", status: "exact" as const, ipa: "tuː" },
-    { text: "this", status: "exact" as const, ipa: "ðɪs" },
-    { text: "lesson", status: "exact" as const, ipa: "ˈlɛsən" },
-    { text: "on", status: "exact" as const, ipa: "ɒn" },
-    { text: "salary", status: "close" as const, ipa: "ˈsæləri" },
-    { text: "negotiation", status: "wrong" as const, ipa: "nɪˌɡəʊʃiˈeɪʃən" }
+  const words: AssessmentWord[] = [
+    { text: "Welcome", isCorrect: true, ipa: "ˈwɛlkəm" },
+    { text: "to", isCorrect: true, ipa: "tuː" },
+    { text: "this", isCorrect: true, ipa: "ðɪs" },
+    { text: "lesson", isCorrect: true, ipa: "ˈlɛsən" },
+    { text: "on", isCorrect: true, ipa: "ɒn" },
+    { text: "salary", isCorrect: false, ipa: "ˈsæləri" },
+    { text: "negotiation", isCorrect: false, ipa: "nɪˌɡəʊʃiˈeɪʃən" }
   ];
 
   const handleRecord = () => {
@@ -36,17 +36,17 @@ export default function ShadowingPanel() {
   };
 
   const handleStop = () => {
-    setRecorderState('analyzing');
+    setRecorderState('evaluating');
     setTimeout(() => setRecorderState('result'), 1500);
   };
 
   const handleRetry = () => {
-    setRecorderState('ready');
+    setRecorderState('idle');
   };
 
   const handleNextQuestion = () => {
     setActiveQuestion(prev => Math.min(totalQuestions, prev + 1));
-    setRecorderState('ready');
+    setRecorderState('idle');
   };
 
   return (
@@ -118,7 +118,7 @@ export default function ShadowingPanel() {
                 >
                   <div className="flex items-start gap-3">
                     <div className={`flex flex-col items-center mt-0.5 ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400'}`}>
-                      <span className="text-[9px] font-mono">0:{line.timestamp.toString().padStart(2, '0')}</span>
+                      <span className="text-[9px] font-mono">{line.timestamp}</span>
                       {isActive && <div className="w-1 h-1 bg-blue-500 rounded-full mt-0.5" />}
                     </div>
                     <div className="flex-1">
