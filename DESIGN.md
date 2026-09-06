@@ -39,6 +39,28 @@ Master English through YouTube videos with dictation, shadowing, speaking practi
 | ai-coach | AI Coach / Equalizer | `#6366f1` | Live microphone waveform, AI phonetic tips (`indigo-500`) |
 | media-canvas | Media Canvas | `#000000` | Video player container, zero letterbox media canvas |
 
+## Dark Mode Palette
+
+Applied via `dark:` variant (Tailwind v4). Surface uses the slate scale.
+Accent brightens one step (`blue-600` → `blue-400`) so it clears WCAG AA on
+dark backgrounds. Muted text uses the gray scale (not slate) to match actual
+codebase usage.
+
+| Role | Name | Hex | Usage |
+| --- | --- | --- | --- |
+| background | Background (Dark) | `#0f172a` | page canvas (`dark:bg-slate-900`) |
+| surface | Surface (Dark) | `#1e293b` | cards, practice workspace (`dark:bg-slate-800`) |
+| surface-raised | Surface raised (Dark) | `#334155` | elevated cards (`dark:bg-slate-700`) |
+| foreground | Foreground (Dark) | `#ffffff` | primary body text, headings (`dark:text-white`) |
+| muted | Muted (Dark) | `#9ca3af` | secondary text, metadata (`dark:text-gray-400`) |
+| border | Border (Dark) | `#334155` | column dividers, container outlines (`dark:border-slate-700`) |
+| border-subtle | Border subtle (Dark) | `#1e293b` | card inner borders, divider lines (`dark:border-slate-800`) |
+| accent | Accent (Dark) | `#3b82f6` | links, active pills, secondary actions (`dark:text-blue-400`) |
+| accent-soft | Accent soft (Dark) | `#1e3a8a` | active sentence background, subtle highlights (`dark:bg-blue-900`) |
+| success | Success / Passed (Dark) | `#34d399` | completed sentence checkmarks, accurate words (`dark:text-emerald-400`) |
+| danger | Danger / Error (Dark) | `#fb7185` | recording indicator, mispronounced words (`dark:text-rose-400`) |
+| warning | Warning / Alert (Dark) | `#fbbf24` | needs-practice alert badge (`dark:text-amber-400`) |
+
 ## Typography
 - **Display:** Be Vietnam Pro — weights 400, 600, 700 — fallbacks: Inter, system-ui, -apple-system, Segoe UI, Helvetica Neue, Arial, sans-serif
 - **Body:** Be Vietnam Pro — weights 400, 500, 600, 700 — fallbacks: Inter, system-ui, -apple-system, Segoe UI, Helvetica Neue, Arial, sans-serif
